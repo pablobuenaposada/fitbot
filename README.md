@@ -18,4 +18,10 @@ venv/bin/python main.py
 Session booked for your_email@domain.com on 20190909 at 1730_60
 ```
 
+## Schedule the script
+You can use crontab to schedule this script for example everyday at 00:01
+
+```sh
+1 0 * * * /home/pi/Desktop/fitbot/venv/bin/python /home/pi/Desktop/fitbot/main.py
+```
 Enjoy!
