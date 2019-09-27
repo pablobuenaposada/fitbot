@@ -13,5 +13,8 @@ $(VIRTUAL_ENV):
 
 virtualenv: $(VIRTUAL_ENV)
 
+black/check:
+	$(BLACK) . --exclude $(VIRTUAL_ENV) --check
+
 black:
 	$(BLACK) . --exclude $(VIRTUAL_ENV)
