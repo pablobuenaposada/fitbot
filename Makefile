@@ -1,12 +1,17 @@
-BLACK=`which black`
+VIRTUAL_ENV ?= venv
+BLACK=$(VIRTUAL_ENV)/bin/black
+PIP=$(VIRTUAL_ENV)/bin/pip
+PYTHON_VERSION=3.6
 
 clean:
-	rm -rf venv
+	rm -rf $(VIRTUAL_ENV)
 	rm -rf __pycache__
 
-virtualenv: clean
-	virtualenv -p python3.6 venv
-	venv/bin/pip install -r requirements.txt
+$(VIRTUAL_ENV):
+	virtualenv -p python$(PYTHON_VERSION) $(VIRTUAL_ENV)
+	$(PIP) install -r requirements.txt
+
+virtualenv: $(VIRTUAL_ENV)
 
 black:
-	$(BLACK) . --exclude venv
+	$(BLACK) . --exclude $(VIRTUAL_ENV)
