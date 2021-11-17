@@ -10,11 +10,11 @@ assert type(settings.BOX["NAME"]) == str
 # checking ENDPOINTS setting
 assert type(settings.ENDPOINTS) == dict
 assert "LOGIN" in settings.ENDPOINTS
-assert type(settings.ENDPOINTS['LOGIN']) == str
+assert type(settings.ENDPOINTS["LOGIN"]) == str
 assert "BOOK" in settings.ENDPOINTS
-assert type(settings.ENDPOINTS['BOOK']) == str
+assert type(settings.ENDPOINTS["BOOK"]) == str
 assert "CLASSES" in settings.ENDPOINTS
-assert type(settings.ENDPOINTS['CLASSES']) == str
+assert type(settings.ENDPOINTS["CLASSES"]) == str
 
 # checking BOOKING_GOALS setting
 assert type(settings.BOOKING_GOALS) == tuple

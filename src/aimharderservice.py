@@ -13,7 +13,7 @@ class AimHarderService:
     @staticmethod
     def _login(email: str, password: str, session=Session()):
         session.post(
-            ENDPOINTS['LOGIN'],
+            ENDPOINTS["LOGIN"],
             data={
                 "login": "Log in",
                 "mail": email,
@@ -25,9 +25,9 @@ class AimHarderService:
     def get_available_trainings_for_day(self, day: datetime):
         self.target_day = day.strftime("%Y%m%d")
         response = self.session.get(
-            ENDPOINTS['CLASSES'],
+            ENDPOINTS["CLASSES"],
             params={
-                "box": BOX['ID'],
+                "box": BOX["ID"],
                 "day": self.target_day,
                 "familyId": "",
             },
@@ -40,7 +40,7 @@ class AimHarderService:
         has_booked_a_training = (
             response.status_code == 200
             and "bookState" in data
-            and data['bookState'] > 0
+            and data["bookState"] > 0
             and not "errorMssg" in data
             and not "errorMssgLang" in data
         )

@@ -8,12 +8,10 @@ import settingscheck
 
 
 def get_booking_goal(day_of_week: datetime):
-    """ Get the booking goal that satisfies the given day of the week """
+    """Get the booking goal that satisfies the given day of the week"""
 
     booking_goals = [
-        goal
-        for goal in BOOKING_GOALS
-        if goal["day_of_week"] == day_of_week.weekday()
+        goal for goal in BOOKING_GOALS if goal["day_of_week"] == day_of_week.weekday()
     ]
     try:
         return booking_goals[0]
@@ -28,7 +26,7 @@ def get_time_to_book_training(booking_goal) -> datetime:
         {"day_of_week": 0, "filters": {"timeid": "1800_60", ...}},
     """
 
-    target_time = booking_goal["filters"]["timeid"].split('_')[0]
+    target_time = booking_goal["filters"]["timeid"].split("_")[0]
     target_time = datetime.strptime(target_time, "%H%M")
     time_to_book = datetime.today().replace(
         hour=target_time.hour, minute=target_time.minute, second=0
@@ -36,9 +34,12 @@ def get_time_to_book_training(booking_goal) -> datetime:
     # try to start booking 1 second before the actual training time
     return time_to_book - timedelta(seconds=1)
 
+
 # This constant depends on the box, you are not allowed to book trainings
 # with more than 3 days in advance
 DAYS_IN_ADVANCE = 3
+
+
 def main():
     target_day: datetime = datetime.today() + timedelta(days=DAYS_IN_ADVANCE)
 
