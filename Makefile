@@ -1,20 +1,17 @@
-VIRTUAL_ENV ?= venv
-BLACK=$(VIRTUAL_ENV)/bin/black
-PIP=$(VIRTUAL_ENV)/bin/pip
-PYTHON_VERSION=3.6
+venv:
+	python3 -m venv venv
+	venv/bin/pip install -r requirements.txt
 
-clean:
-	rm -rf $(VIRTUAL_ENV)
-	rm -rf __pycache__
+format/black: venv
+	venv/bin/black --verbose src
 
-$(VIRTUAL_ENV):
-	virtualenv -p python$(PYTHON_VERSION) $(VIRTUAL_ENV)
-	$(PIP) install -r requirements.txt
+format/black-check: venv
+	venv/bin/black --verbose src --check
 
-virtualenv: $(VIRTUAL_ENV)
+tests: venv format/black-check
 
-black/check:
-	$(BLACK) . --exclude $(VIRTUAL_ENV) --check
+docker/build:
+	docker build --no-cache	--tag=fitbot .
 
-black:
-	$(BLACK) . --exclude $(VIRTUAL_ENV)
+docker/tests:
+	 docker run fitbot /bin/sh -c 'make tests'
