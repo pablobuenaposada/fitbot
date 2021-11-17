@@ -1,49 +1,77 @@
-import requests
 from datetime import datetime, timedelta
+from time import sleep
 
-import constants
-import settings
+from settings import ACCOUNT, BOOKING_GOALS
 
-# calculate target day
-target_day = datetime.today() + timedelta(days=3)
-target_day_str = target_day.strftime("%Y%m%d")
-target_day_of_the_week = target_day.weekday()
+from aimharderservice import AimHarderService
+import settingscheck
 
-# login
-session = requests.Session()
-session.post(
-    constants.LOGIN_ENDPOINT,
-    data={"login": "Log in", "mail": settings.EMAIL, "pw": settings.PASSWORD},
-)
 
-# get available classes for target day
-classes = session.get(
-    constants.CLASSES_ENDPOINT,
-    params={"day": target_day_str, "familyId": "", "box": settings.BOX_ID},
-)
-classes = classes.json()["bookings"]
+def get_booking_goal(day_of_week: datetime):
+    """ Get the booking goal that satisfies the given day of the week """
 
-# try to book a class
-for _class in classes:
-    for goal in settings.BOOKING_GOALS:
-        goal_time = goal.get(target_day_of_the_week, None)
-        if (
-            goal_time is not None and goal_time in _class["timeid"]
-        ):  # if this class is a match for this user book it
-            response = session.post(
-                constants.BOOK_ENDPOINT,
-                data={
-                    "id": _class["id"],
-                    "day": target_day_str,
-                    "insist": 0,
-                    "familiId": "",
-                },
+    booking_goals = [
+        goal
+        for goal in BOOKING_GOALS
+        if goal["day_of_week"] == day_of_week.weekday()
+    ]
+    try:
+        return booking_goals[0]
+    except IndexError:  # did not found a matching booking goal
+        return None
+
+
+def get_time_to_book_training(booking_goal) -> datetime:
+    """
+    Returns the date and time when we should book a training
+    booking_goal has the following shape
+        {"day_of_week": 0, "filters": {"timeid": "1800_60", ...}},
+    """
+
+    target_time = booking_goal["filters"]["timeid"].split('_')[0]
+    target_time = datetime.strptime(target_time, "%H%M")
+    time_to_book = datetime.today().replace(
+        hour=target_time.hour, minute=target_time.minute, second=0
+    )
+    # try to start booking 1 second before the actual training time
+    return time_to_book - timedelta(seconds=1)
+
+# This constant depends on the box, you are not allowed to book trainings
+# with more than 3 days in advance
+DAYS_IN_ADVANCE = 3
+def main():
+    target_day: datetime = datetime.today() + timedelta(days=DAYS_IN_ADVANCE)
+
+    booking_goal = get_booking_goal(target_day)
+    if not booking_goal:
+        return
+    goal_filters = booking_goal.get("filters", {})
+
+    service = AimHarderService(email=ACCOUNT["EMAIL"], password=ACCOUNT["PASSWORD"])
+    trainings = service.get_available_trainings_for_day(target_day)
+    time_to_book_training = get_time_to_book_training(booking_goal)
+
+    while datetime.now() < time_to_book_training:
+        sleep(0.2)
+
+    training_is_booked = False
+    while not training_is_booked:
+
+        for training in trainings:
+            should_book_training = all(
+                training[filter_name] == filter_value
+                for filter_name, filter_value in goal_filters.items()
             )
-            if response.status_code == 200 and response.json()["bookState"]:
-                print(
-                    f'Session booked for {settings.EMAIL} on {target_day_str} at {_class["timeid"]}'
-                )
-            else:
-                print(
-                    f"Found a matching session for {settings.EMAIL} on {target_day_str} but something went wrong"
-                )
+            if not should_book_training:
+                continue
+
+            # training for the class and time we want
+            training_is_booked = service.book_training(
+                training_id=training["id"],
+                time_id=training["timeid"],
+            )
+        sleep(0.1)
+
+
+if __name__ == "__main__":
+    main()
