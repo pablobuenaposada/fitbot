@@ -8,18 +8,19 @@ class AimHarderService:
     def __init__(self, email: str, password: str) -> None:
         self.session = Session()
         self.email = email
-        self.password = password
-        self.__login()
+        self.session = self.__class__._login(email, password)
 
-    def __login(self):
-        return self.session.post(
+    @staticmethod
+    def _login(email: str, password: str, session=Session()):
+        session.post(
             ENDPOINTS['LOGIN'],
             data={
                 "login": "Log in",
-                "mail": self.email,
-                "pw": self.password,
+                "mail": email,
+                "pw": password,
             },
         )
+        return session
 
     def get_available_trainings_for_day(self, day: datetime):
         self.target_day = day.strftime("%Y%m%d")
