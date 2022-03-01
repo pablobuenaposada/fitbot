@@ -2,13 +2,19 @@ venv:
 	python3 -m venv venv
 	venv/bin/pip install -r requirements.txt
 
-format/black: venv
+format:
+	venv/bin/flake8 src
+	venv/bin/pip install -r requirements-tests.txt
 	venv/bin/black --verbose src
 
-format/black-check: venv
+format/check:
+	venv/bin/pip install -r requirements-tests.txt
+	venv/bin/flake8 src
 	venv/bin/black --verbose src --check
 
-tests: venv format/black-check
+tests: venv format/check
+	venv/bin/pip install -r requirements-tests.txt
+	PYTHONPATH=src venv/bin/pytest src/tests
 
 docker/build:
 	docker build --no-cache	--tag=fitbot .
