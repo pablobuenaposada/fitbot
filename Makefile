@@ -3,8 +3,8 @@ venv:
 	venv/bin/pip install -r requirements.txt
 
 format:
-	venv/bin/flake8 src
 	venv/bin/pip install -r requirements-tests.txt
+	venv/bin/flake8 src
 	venv/bin/black --verbose src
 
 format/check:
