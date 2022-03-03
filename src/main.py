@@ -1,76 +1,38 @@
 from datetime import datetime, timedelta
-from time import sleep
-
-from aimharderservice import AimHarderService
-
-from settings import ACCOUNT, BOOKING_GOALS
 
 
-def get_booking_goal(day_of_week: datetime):
+from settings import ACCOUNT, DAYS_IN_ADVANCE
+from client import AimHarderClient
+from exceptions import NoBookingGoal
+import settings
+
+
+def get_booking_goal_time(day: datetime, booking_goals):
     """Get the booking goal that satisfies the given day of the week"""
-
-    booking_goals = [
-        goal for goal in BOOKING_GOALS if goal["day_of_week"] == day_of_week.weekday()
-    ]
     try:
-        return booking_goals[0]
-    except IndexError:  # did not found a matching booking goal
-        return None
+        return (
+            booking_goals[day.weekday()]["time"],
+            booking_goals[day.weekday()]["name"],
+        )
+    except KeyError:  # did not found a matching booking goal
+        raise NoBookingGoal
 
 
-def get_time_to_book_training(booking_goal) -> datetime:
-    """
-    Returns the date and time when we should book a training
-    booking_goal has the following shape
-        {"day_of_week": 0, "filters": {"timeid": "1800_60", ...}},
-    """
-
-    target_time = booking_goal["filters"]["timeid"].split("_")[0]
-    target_time = datetime.strptime(target_time, "%H%M")
-    time_to_book = datetime.today().replace(
-        hour=target_time.hour, minute=target_time.minute, second=0
-    )
-    # try to start booking 1 second before the actual training time
-    return time_to_book - timedelta(seconds=1)
-
-
-# This constant depends on the box, you are not allowed to book trainings
-# with more than 3 days in advance
-DAYS_IN_ADVANCE = 3
+def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
+    classes = list(filter(lambda _class: target_time in _class["timeid"], classes))
+    _class = list(filter(lambda _class: class_name in _class["className"], classes))
+    if len(_class) == 0:
+        raise NoBookingGoal
+    return _class[0]["id"]
 
 
 def main():
-    target_day: datetime = datetime.today() + timedelta(days=DAYS_IN_ADVANCE)
-
-    booking_goal = get_booking_goal(target_day)
-    if not booking_goal:
-        return
-    goal_filters = booking_goal.get("filters", {})
-
-    service = AimHarderService(email=ACCOUNT["EMAIL"], password=ACCOUNT["PASSWORD"])
-    trainings = service.get_available_trainings_for_day(target_day)
-    time_to_book_training = get_time_to_book_training(booking_goal)
-
-    while datetime.now() < time_to_book_training:
-        sleep(0.2)
-
-    training_is_booked = False
-    while not training_is_booked:
-
-        for training in trainings:
-            should_book_training = all(
-                training[filter_name] == filter_value
-                for filter_name, filter_value in goal_filters.items()
-            )
-            if not should_book_training:
-                continue
-
-            # training for the class and time we want
-            training_is_booked = service.book_training(
-                training_id=training["id"],
-                time_id=training["timeid"],
-            )
-        sleep(0.1)
+    target_day = datetime.today() + timedelta(days=DAYS_IN_ADVANCE)
+    client = AimHarderClient(email=ACCOUNT["email"], password=ACCOUNT["password"])
+    target_time, target_name = get_booking_goal_time(target_day, settings.BOOKING_GOALS)
+    classes = client.get_classes(target_day)
+    class_id = get_class_to_book(classes, target_time, target_name)
+    client.book_class(target_day, class_id)
 
 
 if __name__ == "__main__":
