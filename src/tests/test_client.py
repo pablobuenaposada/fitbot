@@ -1,5 +1,6 @@
 import datetime
 from contextlib import nullcontext as does_not_raise
+from http import HTTPStatus
 from unittest.mock import patch
 
 import pytest
@@ -8,18 +9,22 @@ from requests import Session
 from client import AimHarderClient
 from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
 
+from constants import ErrorMessages
+
+from constants import ERROR_TAG_ID
+
 
 class TestAimHarderClient:
     @pytest.mark.parametrize(
         "response, expectation",
         (
-            ('<span id="loginErrors"></span>', does_not_raise()),
+            (f'<span id="{ERROR_TAG_ID}"></span>', does_not_raise()),
             (
-                '<span id="loginErrors">demasiadas veces</span>',
+                f'<span id="{ERROR_TAG_ID}">{ErrorMessages.TOO_MANY_WRONG_ATTEMPTS}</span>',
                 pytest.raises(TooManyWrongAttempts),
             ),
             (
-                '<span id="loginErrors">incorrecto</span>',
+                f'<span id="{ERROR_TAG_ID}">{ErrorMessages.INCORRECT_CREDENTIALS}</span>',
                 pytest.raises(IncorrectCredentials),
             ),
         ),
@@ -54,7 +59,7 @@ class TestAimHarderClient:
                 assert isinstance(result, expected_result)
 
     @pytest.mark.parametrize(
-        "response, expected_trainings",
+        "response, expected_classes",
         (
             (
                 {},
@@ -70,7 +75,7 @@ class TestAimHarderClient:
             ),
         ),
     )
-    def test_get_trainings_for_day(self, response, expected_trainings):
+    def test_get_classes(self, response, expected_classes):
         # mock login
         with patch("requests.Session.post") as m_post:
             m_post.return_value.content = '<span id="loginErrors"></span>'
@@ -78,49 +83,44 @@ class TestAimHarderClient:
 
         with patch("requests.Session.get") as m_get:
             m_get.return_value.json.return_value = response
-            assert (
-                client.get_trainings_for_day(datetime.datetime(2022, 3, 2))
-                == expected_trainings
-            )
+            assert client.get_classes(datetime.datetime(2022, 3, 2)) == expected_classes
 
     @pytest.mark.parametrize(
         "response, status_code, expectation",
         (
             (
                 None,
-                500,
+                HTTPStatus.INTERNAL_SERVER_ERROR,
                 pytest.raises(BookingFailed),
             ),
             (
                 {},
-                200,
+                HTTPStatus.OK,
                 pytest.raises(BookingFailed),
             ),
             (
                 {"bookState": 0},
-                200,
+                HTTPStatus.OK,
                 pytest.raises(BookingFailed),
             ),
             (
                 {"errorMssg": "foo"},
-                200,
+                HTTPStatus.OK,
                 pytest.raises(BookingFailed),
             ),
             (
                 {"errorMssgLang": "foo"},
-                200,
+                HTTPStatus.OK,
                 pytest.raises(BookingFailed),
             ),
             (
-                {
-                    "bookState": 1,
-                },
-                200,
+                {"bookState": 1},
+                HTTPStatus.OK,
                 does_not_raise(),
             ),
         ),
     )
-    def test_book_training(self, response, status_code, expectation):
+    def test_book_class(self, response, status_code, expectation):
         # mock login
         with patch("requests.Session.post") as m_post:
             m_post.return_value.content = '<span id="loginErrors"></span>'
@@ -130,4 +130,4 @@ class TestAimHarderClient:
             m_post.return_value.json.return_value = response
             m_post.return_value.status_code = status_code
             with expectation:
-                client.book_training("20220304", "123")
+                client.book_class("20220304", "123")
