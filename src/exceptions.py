@@ -8,3 +8,7 @@ class IncorrectCredentials(Exception):
 
 class BookingFailed(Exception):
     pass
+
+
+class NoBookingGoal(Exception):
+    pass

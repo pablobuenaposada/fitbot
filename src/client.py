@@ -51,23 +51,18 @@ class AimHarderClient:
         )
         return response.json().get("bookings")
 
-    def book_class(self, target_day: str, class_id: str) -> bool:
+    def book_class(self, target_day: datetime, class_id: str) -> bool:
         response = self.session.post(
             book_endpoint(BOX["name"]),
             data={
                 "id": class_id,
-                "day": target_day,
+                "day": target_day.strftime("%Y%m%d"),
                 "insist": 0,
                 "familyId": "",
             },
         )
         if response.status_code == HTTPStatus.OK:
             response = response.json()
-            if (
-                "bookState" in response
-                and response["bookState"] > 0
-                and "errorMssg" not in response
-                and "errorMssgLang" not in response
-            ):
+            if "errorMssg" not in response and "errorMssgLang" not in response:
                 return
         raise BookingFailed
