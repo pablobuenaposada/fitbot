@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 from time import sleep
 
-from settings import ACCOUNT, BOOKING_GOALS
-
 from aimharderservice import AimHarderService
-import settingscheck
+
+from settings import ACCOUNT, BOOKING_GOALS
 
 
 def get_booking_goal(day_of_week: datetime):
