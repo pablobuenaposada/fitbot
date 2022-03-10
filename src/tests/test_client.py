@@ -9,8 +9,6 @@ from requests import Session
 from client import AimHarderClient
 from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
 
-from constants import ErrorMessages
-
 from constants import ERROR_TAG_ID
 
 
@@ -20,11 +18,11 @@ class TestAimHarderClient:
         (
             (f'<span id="{ERROR_TAG_ID}"></span>', does_not_raise()),
             (
-                f'<span id="{ERROR_TAG_ID}">{ErrorMessages.TOO_MANY_WRONG_ATTEMPTS}</span>',
+                f'<span id="{ERROR_TAG_ID}">{TooManyWrongAttempts.key_phrase}</span>',
                 pytest.raises(TooManyWrongAttempts),
             ),
             (
-                f'<span id="{ERROR_TAG_ID}">{ErrorMessages.INCORRECT_CREDENTIALS}</span>',
+                f'<span id="{ERROR_TAG_ID}">{IncorrectCredentials.key_phrase}</span>',
                 pytest.raises(IncorrectCredentials),
             ),
         ),
@@ -40,12 +38,12 @@ class TestAimHarderClient:
         (
             ('<span id="loginErrors"></span>', does_not_raise(), Session),
             (
-                '<span id="loginErrors">demasiadas veces</span>',
+                f'<span id="{ERROR_TAG_ID}">{TooManyWrongAttempts.key_phrase}</span>',
                 pytest.raises(TooManyWrongAttempts),
                 None,
             ),
             (
-                '<span id="loginErrors">incorrecto</span>',
+                f'<span id="{ERROR_TAG_ID}">{IncorrectCredentials.key_phrase}</span>',
                 pytest.raises(IncorrectCredentials),
                 None,
             ),
@@ -78,7 +76,7 @@ class TestAimHarderClient:
     def test_get_classes(self, response, expected_classes):
         # mock login
         with patch("requests.Session.post") as m_post:
-            m_post.return_value.content = '<span id="loginErrors"></span>'
+            m_post.return_value.content = f'<span id="{ERROR_TAG_ID}"></span>'
             client = AimHarderClient(email="foo", password="bar")
 
         with patch("requests.Session.get") as m_get:
@@ -113,7 +111,7 @@ class TestAimHarderClient:
     def test_book_class(self, response, status_code, expectation):
         # mock login
         with patch("requests.Session.post") as m_post:
-            m_post.return_value.content = '<span id="loginErrors"></span>'
+            m_post.return_value.content = f'<span id="{ERROR_TAG_ID}"></span>'
             client = AimHarderClient(email="foo", password="bar")
 
         with patch("requests.Session.post") as m_post:

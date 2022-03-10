@@ -8,7 +8,6 @@ from constants import (
     LOGIN_ENDPOINT,
     book_endpoint,
     classes_endpoint,
-    ErrorMessages,
     ERROR_TAG_ID,
 )
 from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
@@ -33,11 +32,10 @@ class AimHarderClient:
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser").find(id=ERROR_TAG_ID)
         if soup is not None:
-            match soup.text:
-                case ErrorMessages.TOO_MANY_WRONG_ATTEMPTS:
-                    raise TooManyWrongAttempts
-                case ErrorMessages.INCORRECT_CREDENTIALS:
-                    raise IncorrectCredentials
+            if TooManyWrongAttempts.key_phrase in soup.text:
+                raise TooManyWrongAttempts
+            elif IncorrectCredentials.key_phrase in soup.text:
+                raise IncorrectCredentials
         return session
 
     def get_classes(self, target_day: datetime):
