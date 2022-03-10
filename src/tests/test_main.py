@@ -18,7 +18,6 @@ from freezegun import freeze_time
 
 from constants import LOGIN_ENDPOINT
 
-import settings
 from constants import book_endpoint
 
 
@@ -28,7 +27,7 @@ class TestGetBookingGoalTime:
         (
             (
                 datetime.datetime(2022, 2, 28),
-                {0: {"time": "1700", "name": "foo"}},
+                {"0": {"time": "1700", "name": "foo"}},
                 ("1700", "foo"),
                 does_not_raise(),
             ),
@@ -78,7 +77,7 @@ class TestMain:
     def mock_request_post(*args, **kwargs):
         if args[1] == LOGIN_ENDPOINT:
             return Mock(content="")
-        elif args[1] == book_endpoint(settings.BOX["name"]):
+        elif args[1] == book_endpoint("foo"):
             return Mock(json=lambda: {}, status_code=HTTPStatus.OK)
 
     @freeze_time("2022-03-04")
@@ -90,4 +89,11 @@ class TestMain:
             m_get.return_value.json.return_value = {
                 "bookings": [{"id": 123, "timeid": "1700_60", "className": "Provenza"}]
             }
-            main()
+            main(
+                email="foo",
+                password="bar",
+                booking_goals={"0": {"time": "1700", "name": "Provenza"}},
+                box_name="foo",
+                box_id=1,
+                days_in_advance=3,
+            )

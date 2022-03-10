@@ -11,12 +11,13 @@ from constants import (
     ERROR_TAG_ID,
 )
 from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
-from settings import BOX
 
 
 class AimHarderClient:
-    def __init__(self, email: str, password: str):
+    def __init__(self, email: str, password: str, box_id: int, box_name: str):
         self.session = self._login(email, password)
+        self.box_id = box_id
+        self.box_name = box_name
 
     @staticmethod
     def _login(email: str, password: str):
@@ -40,9 +41,9 @@ class AimHarderClient:
 
     def get_classes(self, target_day: datetime):
         response = self.session.get(
-            classes_endpoint(BOX["name"]),
+            classes_endpoint(self.box_name),
             params={
-                "box": BOX["id"],
+                "box": self.box_id,
                 "day": target_day.strftime("%Y%m%d"),
                 "familyId": "",
             },
@@ -51,7 +52,7 @@ class AimHarderClient:
 
     def book_class(self, target_day: datetime, class_id: str) -> bool:
         response = self.session.post(
-            book_endpoint(BOX["name"]),
+            book_endpoint(self.box_name),
             data={
                 "id": class_id,
                 "day": target_day.strftime("%Y%m%d"),

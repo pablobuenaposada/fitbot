@@ -31,7 +31,7 @@ class TestAimHarderClient:
         with expectation, patch("requests.Session.post") as m_post:
             m_post.return_value.content = response
             # m_post.return_value.status_code = 500
-            AimHarderClient(email="foo", password="bar")
+            AimHarderClient(email="foo", password="bar", box_id=1, box_name="foo")
 
     @pytest.mark.parametrize(
         "response, expectation, expected_result",
@@ -77,7 +77,9 @@ class TestAimHarderClient:
         # mock login
         with patch("requests.Session.post") as m_post:
             m_post.return_value.content = f'<span id="{ERROR_TAG_ID}"></span>'
-            client = AimHarderClient(email="foo", password="bar")
+            client = AimHarderClient(
+                email="foo", password="bar", box_id=1, box_name="foo"
+            )
 
         with patch("requests.Session.get") as m_get:
             m_get.return_value.json.return_value = response
@@ -112,7 +114,9 @@ class TestAimHarderClient:
         # mock login
         with patch("requests.Session.post") as m_post:
             m_post.return_value.content = f'<span id="{ERROR_TAG_ID}"></span>'
-            client = AimHarderClient(email="foo", password="bar")
+            client = AimHarderClient(
+                email="foo", password="bar", box_id=1, box_name="foo"
+            )
 
         with patch("requests.Session.post") as m_post:
             m_post.return_value.json.return_value = response
