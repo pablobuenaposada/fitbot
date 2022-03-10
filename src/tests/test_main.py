@@ -1,4 +1,6 @@
 import datetime
+from http import HTTPStatus
+from unittest.mock import patch, Mock
 
 import pytest
 
@@ -9,6 +11,15 @@ from exceptions import NoBookingGoal
 from main import get_class_to_book
 
 from main import get_booking_goal_time
+
+from main import main
+
+from freezegun import freeze_time
+
+from constants import LOGIN_ENDPOINT
+
+import settings
+from constants import book_endpoint
 
 
 class TestGetBookingGoalTime:
@@ -61,3 +72,22 @@ class TestGetClassToBook:
     def test_get_class_to_book(self, classes, target_time, class_name, expectation):
         with expectation:
             assert get_class_to_book(classes, target_time, class_name) == 123
+
+
+class TestMain:
+    def mock_request_post(*args, **kwargs):
+        if args[1] == LOGIN_ENDPOINT:
+            return Mock(content="")
+        elif args[1] == book_endpoint(settings.BOX["name"]):
+            return Mock(json=lambda: {}, status_code=HTTPStatus.OK)
+
+    @freeze_time("2022-03-04")
+    def test_main(self):
+        with patch("requests.Session.post") as m_post, patch(
+            "requests.Session.get"
+        ) as m_get:
+            m_post.side_effect = self.mock_request_post
+            m_get.return_value.json.return_value = {
+                "bookings": [{"id": 123, "timeid": "1700_60", "className": "Provenza"}]
+            }
+            main()
