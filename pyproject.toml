@@ -1,0 +1,2 @@
+[tool.black]
+experimental-string-processing = true
