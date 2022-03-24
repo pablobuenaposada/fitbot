@@ -11,6 +11,8 @@ from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
 
 from constants import ERROR_TAG_ID
 
+from exceptions import MESSAGE_BOOKING_FAILED_NO_CREDIT, MESSAGE_BOOKING_FAILED_UNKNOWN
+
 
 class TestAimHarderClient:
     @pytest.mark.parametrize(
@@ -91,7 +93,7 @@ class TestAimHarderClient:
             (
                 None,
                 HTTPStatus.INTERNAL_SERVER_ERROR,
-                pytest.raises(BookingFailed),
+                pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
             ),
             (
                 {},
@@ -101,12 +103,17 @@ class TestAimHarderClient:
             (
                 {"errorMssg": "foo"},
                 HTTPStatus.OK,
-                pytest.raises(BookingFailed),
+                pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
             ),
             (
                 {"errorMssgLang": "foo"},
                 HTTPStatus.OK,
-                pytest.raises(BookingFailed),
+                pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
+            ),
+            (
+                {"bookState": -2},
+                HTTPStatus.OK,
+                pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_NO_CREDIT),
             ),
         ),
     )
