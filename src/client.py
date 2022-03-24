@@ -10,7 +10,13 @@ from constants import (
     classes_endpoint,
     ERROR_TAG_ID,
 )
-from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
+from exceptions import (
+    BookingFailed,
+    IncorrectCredentials,
+    TooManyWrongAttempts,
+    MESSAGE_BOOKING_FAILED_UNKNOWN,
+    MESSAGE_BOOKING_FAILED_NO_CREDIT,
+)
 
 
 class AimHarderClient:
@@ -62,6 +68,9 @@ class AimHarderClient:
         )
         if response.status_code == HTTPStatus.OK:
             response = response.json()
+            if "bookState" in response and response["bookState"] == -2:
+                raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
             if "errorMssg" not in response and "errorMssgLang" not in response:
+                # booking went fine
                 return
-        raise BookingFailed
+        raise BookingFailed(MESSAGE_BOOKING_FAILED_UNKNOWN)
