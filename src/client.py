@@ -85,9 +85,8 @@ class AimHarderClient:
             if "bookState" in response and response["bookState"] == -2:
                 raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
             if "bookState" in response and response["bookState"] == -12:
-                self.logger.error(f"Booking unsuccesful. You cannot book the same session twice.")
+                # self.logger.error(f"Booking unsuccesful. You cannot book the same session twice.")
                 raise BookingFailed(response['errorMssg'])
-            # TODO is errorMssg a typo or that's in the response?
             if "errorMssg" not in response and "errorMssgLang" not in response:
                 # booking went fine
                 self.logger.info(f"Booking completed successfully.")
