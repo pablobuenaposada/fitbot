@@ -28,10 +28,10 @@ def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
 
 def main(email, password, booking_goals, box_name, box_id, days_in_advance):
     target_day = datetime.today() + timedelta(days=days_in_advance)
+    target_time, target_name = get_booking_goal_time(target_day, booking_goals)
     client = AimHarderClient(
         email=email, password=password, box_id=box_id, box_name=box_name
     )
-    target_time, target_name = get_booking_goal_time(target_day, booking_goals)
     classes = client.get_classes(target_day)
     class_id = get_class_to_book(classes, target_time, target_name)
     client.book_class(target_day, class_id)
