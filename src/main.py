@@ -26,7 +26,7 @@ def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
         raise BoxClosed("Box is closed")
 
     classes = list(filter(lambda _class: target_time in _class["timeid"], classes))
-    _class = list(filter(lambda _class: class_name in _class["className"], classes))
+    _class = list(filter(lambda _class: class_name.lower() in _class["className"].lower(), classes))
     if len(_class) == 0:
         raise NoBookingGoal(f"No class with the text `{class_name}` in its name at time `{target_time}`")
     return _class[0]["id"]
