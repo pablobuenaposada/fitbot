@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 
 from client import AimHarderClient
-from exceptions import NoBookingGoal, NoClassOnTargetDayTime, BoxClosed
+from exceptions import NoBookingGoal, NoClassOnTargetDayTime, BoxClosed, BookingFailed
 
 
 def get_booking_goal_time(day: datetime, booking_goals):
@@ -50,7 +50,7 @@ def main(email, password, booking_goals, box_name, box_id, days_in_advance, fami
         # From all the classes fetched, we select the one we want to book.
         class_id = get_class_to_book(classes, target_time, target_name)
         client.book_class(target_day, class_id, family_id)
-    except (NoClassOnTargetDayTime, BoxClosed, NoBookingGoal) as e:
+    except (NoClassOnTargetDayTime, BoxClosed, NoBookingGoal, BookingFailed) as e:
         logging.error(e)
 
 

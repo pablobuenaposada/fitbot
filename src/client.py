@@ -1,3 +1,5 @@
+import logging
+import time
 from datetime import datetime
 from http import HTTPStatus
 
@@ -15,7 +17,7 @@ from exceptions import (
     IncorrectCredentials,
     TooManyWrongAttempts,
     MESSAGE_BOOKING_FAILED_UNKNOWN,
-    MESSAGE_BOOKING_FAILED_NO_CREDIT,
+    MESSAGE_BOOKING_FAILED_NO_CREDIT, ErrorResponse,
 )
 
 
@@ -24,6 +26,10 @@ class AimHarderClient:
         self.session = self._login(email, password)
         self.box_id = box_id
         self.box_name = box_name
+
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+        self.logger.debug("Client connected to AimHarder.")
 
     @staticmethod
     def _login(email: str, password: str):
@@ -55,7 +61,14 @@ class AimHarderClient:
                 "_": time.time(),
             },
         )
-        return response.json().get("bookings")
+        if response.status_code == HTTPStatus.OK:
+            bookings = response.json().get("bookings")
+            self.logger.info(f"Retrieved {len(bookings)} classes for day {target_day.strftime('%A, %Y-%m-%d')}")
+            return bookings
+        else:
+            self.logger.error("Error getting classes for the day %s on request %s with response: %s %s %s",
+                              target_day.strftime("%Y%m%d"), response.url, response.status_code, response.reason, response.text)
+            raise ErrorResponse
 
     def book_class(self, target_day: datetime, class_id: str, family_id: str) -> bool:
         response = self.session.post(
@@ -71,7 +84,14 @@ class AimHarderClient:
             response = response.json()
             if "bookState" in response and response["bookState"] == -2:
                 raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
+            if "bookState" in response and response["bookState"] == -12:
+                self.logger.error(f"Booking unsuccesful. You cannot book the same session twice.")
+                raise BookingFailed(response['errorMssg'])
+            # TODO is errorMssg a typo or that's in the response?
             if "errorMssg" not in response and "errorMssgLang" not in response:
                 # booking went fine
-                return
+                self.logger.info(f"Booking completed successfully.")
+                return True
+        self.logger.error(f"UNKNOWN ERROR!!!!!.")
+        self.logger.error(response)
         raise BookingFailed(MESSAGE_BOOKING_FAILED_UNKNOWN)
