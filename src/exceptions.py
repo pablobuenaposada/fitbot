@@ -22,3 +22,12 @@ class BookingFailed(Exception):
 
 class NoBookingGoal(Exception):
     pass
+
+
+class NoClassOnTargetDayTime(Exception):
+    """The class you want to book is not on the target day"""
+    pass
+
+
+class BoxClosed(Exception):
+    pass
