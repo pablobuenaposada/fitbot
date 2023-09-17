@@ -32,7 +32,7 @@ def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
     return _class[0]["id"]
 
 
-def main(email, password, booking_goals, box_name, box_id, days_in_advance):
+def main(email, password, booking_goals, box_name, box_id, days_in_advance, family_id):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     target_day = datetime.today() + timedelta(days=days_in_advance)
@@ -46,10 +46,10 @@ def main(email, password, booking_goals, box_name, box_id, days_in_advance):
         )
 
         # We fetch the classes that are scheduled for the target day
-        classes = client.get_classes(target_day)
+        classes = client.get_classes(target_day, family_id)
         # From all the classes fetched, we select the one we want to book.
         class_id = get_class_to_book(classes, target_time, target_name)
-        client.book_class(target_day, class_id)
+        client.book_class(target_day, class_id, family_id)
     except (NoClassOnTargetDayTime, BoxClosed, NoBookingGoal) as e:
         logging.error(e)
 
@@ -61,7 +61,8 @@ if __name__ == "__main__":
      --password 1234
      --box-name lahuellacrossfit
      --box-id 3984
-     --booking-goal '{"0":{"time": "1815", "name": "Provenza"}}'
+     --booking-goal '{"0":{"time": "1815", "name": "Provenza"}}
+     --family_-id 123456'
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("--email", required=True, type=str)
@@ -70,6 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("--box-name", required=True, type=str)
     parser.add_argument("--box-id", required=True, type=int)
     parser.add_argument("--days-in-advance", required=True, type=int, default=3)
+    parser.add_argument("--family-id", required=False, type=int, default=None)
     args = parser.parse_args()
     input = {key: value for key, value in args.__dict__.items() if value != ""}
     main(**input)
