@@ -91,6 +91,6 @@ class AimHarderClient:
                 # booking went fine
                 self.logger.info(f"Booking completed successfully.")
                 return True
-        self.logger.error(f"UNKNOWN ERROR!!!!!.")
+        self.logger.error("UNKNOWN ERROR")
         self.logger.error(response)
         raise BookingFailed(MESSAGE_BOOKING_FAILED_UNKNOWN)
