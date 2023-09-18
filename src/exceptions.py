@@ -26,6 +26,7 @@ class NoBookingGoal(Exception):
 
 class NoClassOnTargetDayTime(Exception):
     """The class you want to book is not on the target day"""
+
     pass
 
 

@@ -17,7 +17,8 @@ from exceptions import (
     IncorrectCredentials,
     TooManyWrongAttempts,
     MESSAGE_BOOKING_FAILED_UNKNOWN,
-    MESSAGE_BOOKING_FAILED_NO_CREDIT, ErrorResponse,
+    MESSAGE_BOOKING_FAILED_NO_CREDIT,
+    ErrorResponse,
 )
 
 
@@ -63,11 +64,19 @@ class AimHarderClient:
         )
         if response.status_code == HTTPStatus.OK:
             bookings = response.json().get("bookings")
-            self.logger.info(f"Retrieved {len(bookings)} classes for day {target_day.strftime('%A, %Y-%m-%d')}")
+            self.logger.info(
+                f"Retrieved {len(bookings)} classes for day {target_day.strftime('%A, %Y-%m-%d')}"
+            )
             return bookings
         else:
-            self.logger.error("Error getting classes for the day %s on request %s with response: %s %s %s",
-                              target_day.strftime("%Y%m%d"), response.url, response.status_code, response.reason, response.text)
+            self.logger.error(
+                "Error getting classes for the day %s on request %s with response: %s %s %s",
+                target_day.strftime("%Y%m%d"),
+                response.url,
+                response.status_code,
+                response.reason,
+                response.text,
+            )
             raise ErrorResponse
 
     def book_class(self, target_day: datetime, class_id: str, family_id: str) -> bool:
@@ -86,7 +95,7 @@ class AimHarderClient:
                 raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
             if "bookState" in response and response["bookState"] == -12:
                 # self.logger.error(f"Booking unsuccesful. You cannot book the same session twice.")
-                raise BookingFailed(response['errorMssg'])
+                raise BookingFailed(response["errorMssg"])
             if "errorMssg" not in response and "errorMssgLang" not in response:
                 # booking went fine
                 self.logger.info(f"Booking completed successfully.")
