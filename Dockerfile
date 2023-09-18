@@ -1,10 +1,9 @@
-FROM python:latest
+FROM python:3.11
 
 WORKDIR /usr/src/app
 
-COPY src /usr/src/app/src
-COPY Makefile requirements.txt requirements-tests.txt setup.cfg /usr/src/app/
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN make venv
-
-CMD ["make", "run"]
+COPY src/ /usr/src/app/
+ENTRYPOINT [ "python", "./main.py" ]
