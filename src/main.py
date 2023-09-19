@@ -81,8 +81,8 @@ if __name__ == "__main__":
      --password 1234
      --box-name lahuellacrossfit
      --box-id 3984
-     --booking-goal '{"0":{"time": "1815", "name": "Provenza"}}
-     --family_-id 123456'
+     --booking-goal '{"0":{"time": "1815", "name": "Provenza"}}'
+     --family-id 123456'
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("--email", required=True, type=str)
