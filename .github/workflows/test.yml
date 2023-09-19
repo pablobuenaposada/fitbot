@@ -1,4 +1,4 @@
-name: Build
+name: Lint and Test
 
 on:
   push:
@@ -11,6 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build docker image
-      run: make docker/build
+      run: docker build --tag fitbot:tests -f Dockerfile.test .
     - name: Lint and unit tests
-      run: make docker/tests
+      run: docker run fitbot:tests

@@ -1,0 +1,17 @@
+FROM python:3.11
+
+WORKDIR /app
+
+COPY requirements-tests.txt requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-tests.txt
+
+COPY Makefile setup.cfg /app/
+COPY src/ /app/
+
+# Check format
+RUN black --verbose . --check
+RUN flake8 .
+
+ENV PYTHONPATH /app/
+CMD ["pytest"]
