@@ -7,10 +7,8 @@ import pytest
 from requests import Session
 
 from client import AimHarderClient
-from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
-
 from constants import ERROR_TAG_ID
-
+from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
 from exceptions import MESSAGE_BOOKING_FAILED_NO_CREDIT, MESSAGE_BOOKING_FAILED_UNKNOWN
 
 
@@ -84,6 +82,7 @@ class TestAimHarderClient:
             )
 
         with patch("requests.Session.get") as m_get:
+            m_get.return_value.status_code = HTTPStatus.OK
             m_get.return_value.json.return_value = response
             assert client.get_classes(datetime.datetime(2022, 3, 2)) == expected_classes
 
