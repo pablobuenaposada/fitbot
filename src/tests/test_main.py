@@ -1,24 +1,17 @@
 import datetime
+from contextlib import nullcontext as does_not_raise
 from http import HTTPStatus
 from unittest.mock import patch, Mock
 
 import pytest
-
-from contextlib import nullcontext as does_not_raise
-
-from exceptions import NoBookingGoal
-
-from main import get_class_to_book
-
-from main import get_booking_goal_time
-
-from main import main
-
 from freezegun import freeze_time
 
 from constants import LOGIN_ENDPOINT
-
 from constants import book_endpoint
+from exceptions import NoBookingGoal, BoxClosed, NoClassOnTargetDayTime
+from main import get_booking_goal_time
+from main import get_class_to_book
+from main import main
 
 
 class TestGetBookingGoalTime:
@@ -31,7 +24,12 @@ class TestGetBookingGoalTime:
                 ("1700", "foo"),
                 does_not_raise(),
             ),
-            (datetime.datetime(2022, 2, 28), {}, None, pytest.raises(NoBookingGoal)),
+            (
+                datetime.datetime(2022, 2, 28),
+                {},
+                None,
+                pytest.raises(NoClassOnTargetDayTime),
+            ),
         ),
     )
     def test_get_booking_goal_time(
@@ -66,6 +64,12 @@ class TestGetClassToBook:
                 "foo",
                 pytest.raises(NoBookingGoal),
             ),
+            (
+                [],
+                "1700",
+                "foo",
+                pytest.raises(BoxClosed),
+            ),
         ),
     )
     def test_get_class_to_book(self, classes, target_time, class_name, expectation):
@@ -86,6 +90,7 @@ class TestMain:
             "requests.Session.get"
         ) as m_get:
             m_post.side_effect = self.mock_request_post
+            m_get.return_value.status_code = HTTPStatus.OK
             m_get.return_value.json.return_value = {
                 "bookings": [{"id": 123, "timeid": "1700_60", "className": "Provenza"}]
             }

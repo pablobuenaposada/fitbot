@@ -2,6 +2,7 @@ from abc import ABC
 
 MESSAGE_BOOKING_FAILED_NO_CREDIT = "No credit available"
 MESSAGE_BOOKING_FAILED_UNKNOWN = "Unknown error"
+MESSAGE_BOX_IS_CLOSED = "Box is closed"
 
 
 class ErrorResponse(ABC, Exception):
@@ -26,6 +27,7 @@ class NoBookingGoal(Exception):
 
 class NoClassOnTargetDayTime(Exception):
     """The class you want to book is not on the target day"""
+
     pass
 
 

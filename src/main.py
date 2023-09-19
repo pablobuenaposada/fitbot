@@ -3,9 +3,14 @@ import json
 import logging
 from datetime import datetime, timedelta
 
-
 from client import AimHarderClient
-from exceptions import NoBookingGoal, NoClassOnTargetDayTime, BoxClosed, BookingFailed
+from exceptions import (
+    NoBookingGoal,
+    NoClassOnTargetDayTime,
+    BoxClosed,
+    BookingFailed,
+    MESSAGE_BOX_IS_CLOSED,
+)
 
 
 def get_booking_goal_time(day: datetime, booking_goals):
@@ -17,29 +22,44 @@ def get_booking_goal_time(day: datetime, booking_goals):
             booking_goals[str(day.weekday())]["name"],
         )
     except KeyError:  # There's nothing to book this day
-        raise NoClassOnTargetDayTime(f"There is no class to book on {day.strftime('%A, %Y-%m-%d')}. "
-                                     f"Either the time or the name could not be found in the input parameters.")
+        raise NoClassOnTargetDayTime(
+            f"There is no class to book on {day.strftime('%A, %Y-%m-%d')}. "
+            f"Either the time or the name could not be found in the input parameters."
+        )
 
 
 def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
-    if len(classes) == 0:
-        raise BoxClosed("Box is closed")
+    if not classes or len(classes) == 0:
+        raise BoxClosed(MESSAGE_BOX_IS_CLOSED)
 
     classes = list(filter(lambda _class: target_time in _class["timeid"], classes))
-    _class = list(filter(lambda _class: class_name.lower() in _class["className"].lower(), classes))
+    _class = list(
+        filter(
+            lambda _class: class_name.lower() in _class["className"].lower(), classes
+        )
+    )
     if len(_class) == 0:
-        raise NoBookingGoal(f"No class with the text `{class_name}` in its name at time `{target_time}`")
+        raise NoBookingGoal(
+            f"No class with the text `{class_name}` in its name at time `{target_time}`"
+        )
     return _class[0]["id"]
 
 
-def main(email, password, booking_goals, box_name, box_id, days_in_advance, family_id):
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+def main(
+    email, password, booking_goals, box_name, box_id, days_in_advance, family_id=None
+):
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
 
     target_day = datetime.today() + timedelta(days=days_in_advance)
     try:
         # We get the class time and name we want to book
         target_time, target_name = get_booking_goal_time(target_day, booking_goals)
-        logging.info(f"Found date ({target_day.strftime('%A, %Y-%m-%d')}), time ({target_time}) and name class ({target_name}) to book.")
+        logging.info(
+            f"Found date ({target_day.strftime('%A, %Y-%m-%d')}), "
+            f"time ({target_time}) and name class ({target_name}) to book."
+        )
 
         client = AimHarderClient(
             email=email, password=password, box_id=box_id, box_name=box_name
