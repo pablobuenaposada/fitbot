@@ -17,6 +17,10 @@ class IncorrectCredentials(ErrorResponse):
     key_phrase = "incorrecto"
 
 
+class BookingAlreadyDone(Exception):
+    pass
+
+
 class BookingFailed(Exception):
     pass
 
