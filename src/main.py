@@ -23,8 +23,7 @@ def get_booking_goal_time(day: datetime, booking_goals):
         )
     except KeyError:  # There's nothing to book this day
         raise NoClassOnTargetDayTime(
-            f"There is no class to book on {day.strftime('%A, %Y-%m-%d')}. "
-            f"Either the time or the name could not be found in the input parameters."
+            f"There is no booking-goal for {day.strftime('%A, %Y-%m-%d')}."
         )
 
 

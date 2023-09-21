@@ -19,7 +19,6 @@ from exceptions import (
     MESSAGE_BOOKING_FAILED_UNKNOWN,
     MESSAGE_BOOKING_FAILED_NO_CREDIT,
     ErrorResponse,
-    BookingAlreadyDone,
 )
 
 
@@ -103,8 +102,7 @@ class AimHarderClient:
             if "bookState" in response and response["bookState"] == -2:
                 raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
             if "bookState" in response and response["bookState"] == -12:
-                # self.logger.error(f"Booking unsuccesful. You cannot book the same session twice.")
-                raise BookingAlreadyDone(response["errorMssg"])
+                raise BookingFailed(response["errorMssg"])
             if "errorMssg" not in response and "errorMssgLang" not in response:
                 # booking went fine
                 self.logger.info("Booking completed successfully.")

@@ -114,6 +114,15 @@ class TestAimHarderClient:
                 HTTPStatus.OK,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_NO_CREDIT),
             ),
+            (
+                {
+                    'bookState': -12,
+                    'errorMssg': 'No puedes reservar clases con más de 15 días de antelación',
+                    'errorMssgLang': 'ERROR_ANTELACION_CLIENTE'
+                },
+                HTTPStatus.OK,
+                pytest.raises(BookingFailed, match="No puedes reservar clases con más de 15 días de antelación"),
+            ),
         ),
     )
     def test_book_class(self, response, status_code, expectation):
