@@ -87,45 +87,62 @@ class TestAimHarderClient:
             assert client.get_classes(datetime.datetime(2022, 3, 2)) == expected_classes
 
     @pytest.mark.parametrize(
-        "response, status_code, expectation",
+        "family_id, response, status_code, expectation",
         (
             (
+                None,
                 None,
                 HTTPStatus.INTERNAL_SERVER_ERROR,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
             ),
             (
+                None,
                 {},
                 HTTPStatus.OK,
                 does_not_raise(),
             ),
             (
+                "1234",
+                {},
+                HTTPStatus.OK,
+                does_not_raise(),
+            ),
+            (
+                None,
                 {"errorMssg": "foo"},
                 HTTPStatus.OK,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
             ),
             (
+                None,
                 {"errorMssgLang": "foo"},
                 HTTPStatus.OK,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
             ),
             (
+                None,
                 {"bookState": -2},
                 HTTPStatus.OK,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_NO_CREDIT),
             ),
             (
+                None,
                 {
-                    'bookState': -12,
-                    'errorMssg': 'No puedes reservar clases con más de 15 días de antelación',
-                    'errorMssgLang': 'ERROR_ANTELACION_CLIENTE'
+                    "bookState": -12,
+                    "errorMssg": (
+                        "No puedes reservar clases con más de 15 días de antelación"
+                    ),
+                    "errorMssgLang": "ERROR_ANTELACION_CLIENTE",
                 },
                 HTTPStatus.OK,
-                pytest.raises(BookingFailed, match="No puedes reservar clases con más de 15 días de antelación"),
+                pytest.raises(
+                    BookingFailed,
+                    match="No puedes reservar clases con más de 15 días de antelación",
+                ),
             ),
         ),
     )
-    def test_book_class(self, response, status_code, expectation):
+    def test_book_class(self, family_id, response, status_code, expectation):
         # mock login
         with patch("requests.Session.post") as m_post:
             m_post.return_value.content = f'<span id="{ERROR_TAG_ID}"></span>'
@@ -137,4 +154,4 @@ class TestAimHarderClient:
             m_post.return_value.json.return_value = response
             m_post.return_value.status_code = status_code
             with expectation:
-                client.book_class(datetime.datetime(2022, 3, 2), "123")
+                client.book_class(datetime.datetime(2022, 3, 2), "123", family_id)
