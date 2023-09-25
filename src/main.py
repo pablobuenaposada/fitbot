@@ -152,7 +152,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--days-off-file",
         required=False,
-        type=int,
+        type=str,
         default=None,
         help=(
             "File containing days off (optional) - Plain text file with a date per line"
