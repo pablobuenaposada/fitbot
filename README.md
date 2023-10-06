@@ -38,5 +38,7 @@ which should be sent in this form:
 
 `days-in-advance`: this is how many days in advance the script should try to book classes from, so for example, if this script is being run on a Monday and this field is set to 3 it's going to try book Thursday class from `booking_goals`
 
+`family-id`: Not mandatory. This is the id for the person who wants to book a class in case the account has more than one member. 
+The value for this parameter can be found by inspecting the requests with the browser, as with the field `box-id`.
 
 Enjoy!

@@ -45,25 +45,27 @@ class AimHarderClient:
                 raise IncorrectCredentials
         return session
 
-    def get_classes(self, target_day: datetime):
+    def get_classes(self, target_day: datetime, family_id: str | None = None):
         response = self.session.get(
             classes_endpoint(self.box_name),
             params={
                 "box": self.box_id,
                 "day": target_day.strftime("%Y%m%d"),
-                "familyId": "",
+                "familyId": family_id,
             },
         )
         return response.json().get("bookings")
 
-    def book_class(self, target_day: datetime, class_id: str) -> bool:
+    def book_class(
+        self, target_day: datetime, class_id: str, family_id: str | None = None
+    ) -> bool:
         response = self.session.post(
             book_endpoint(self.box_name),
             data={
                 "id": class_id,
                 "day": target_day.strftime("%Y%m%d"),
                 "insist": 0,
-                "familyId": "",
+                "familyId": family_id,
             },
         )
         if response.status_code == HTTPStatus.OK:
