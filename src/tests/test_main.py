@@ -6,7 +6,7 @@ import pytest
 
 from contextlib import nullcontext as does_not_raise
 
-from exceptions import NoBookingGoal, BoxClosed, NoClassOnTargetDayTime
+from exceptions import NoBookingGoal, BoxClosed
 
 from main import get_class_to_book
 
@@ -35,7 +35,7 @@ class TestGetBookingGoalTime:
                 datetime.datetime(2022, 2, 28),
                 {},
                 None,
-                pytest.raises(NoClassOnTargetDayTime),
+                pytest.raises(NoBookingGoal),
             ),
         ),
     )

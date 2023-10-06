@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from http import HTTPStatus
 
@@ -53,7 +52,6 @@ class AimHarderClient:
                 "box": self.box_id,
                 "day": target_day.strftime("%Y%m%d"),
                 "familyId": family_id,
-                "_": time.time(),
             },
         )
         return response.json().get("bookings")

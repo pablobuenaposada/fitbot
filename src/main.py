@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from client import AimHarderClient
 from exceptions import (
     NoBookingGoal,
-    NoClassOnTargetDayTime,
     BoxClosed,
     MESSAGE_BOX_IS_CLOSED,
 )
@@ -20,7 +19,7 @@ def get_booking_goal_time(day: datetime, booking_goals):
             booking_goals[str(day.weekday())]["name"],
         )
     except KeyError:  # did not find a matching booking goal
-        raise NoClassOnTargetDayTime(
+        raise NoBookingGoal(
             f"There is no booking-goal for {day.strftime('%A, %Y-%m-%d')}."
         )
 
