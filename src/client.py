@@ -52,7 +52,7 @@ class AimHarderClient:
                 raise IncorrectCredentials
         return session
 
-    def get_classes(self, target_day: datetime, family_id: str = None):
+    def get_classes(self, target_day: datetime, family_id: str | None = None):
         response = self.session.get(
             classes_endpoint(self.box_name),
             params={
@@ -86,7 +86,7 @@ class AimHarderClient:
             raise ErrorResponse
 
     def book_class(
-        self, target_day: datetime, class_id: str, family_id: str = None
+        self, target_day: datetime, class_id: str, family_id: str | None = None
     ) -> bool:
         response = self.session.post(
             book_endpoint(self.box_name),
