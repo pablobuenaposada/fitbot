@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import sys
 from datetime import datetime, timedelta
 
 from client import AimHarderClient
@@ -106,6 +107,7 @@ def main(
         client.book_class(target_day, class_id, family_id)
     except (NoClassOnTargetDayTime, BoxClosed, NoBookingGoal, BookingFailed) as e:
         logging.error(e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
