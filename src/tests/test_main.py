@@ -8,7 +8,7 @@ from freezegun import freeze_time
 
 from constants import LOGIN_ENDPOINT
 from constants import book_endpoint
-from exceptions import NoBookingGoal, BoxClosed, NoClassOnTargetDayTime
+from exceptions import NoBookingGoal, BoxClosed, NoClassOnTargetDayTime, DayOff
 from main import get_booking_goal_time, validate_target_day
 from main import get_class_to_book
 from main import load_days_off
@@ -150,7 +150,7 @@ class TestValidateTargetDay:
             2023, 9, 21
         )  # A date that exists in the days_off file
         with pytest.raises(
-            NoBookingGoal,
+            DayOff,
             match=(
                 "The date Thursday, 2023-09-21 is among your days off list so don't"
                 " book anything"

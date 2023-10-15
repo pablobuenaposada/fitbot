@@ -33,3 +33,7 @@ class NoClassOnTargetDayTime(Exception):
 
 class BoxClosed(Exception):
     pass
+
+
+class DayOff(Exception):
+    pass

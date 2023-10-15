@@ -66,17 +66,20 @@ class AimHarderClient:
             bookings = response.json().get("bookings")
             if not bookings:
                 self.logger.info(
-                    f"No classes retrieved for day {target_day.strftime('%A, %Y-%m-%d')}"
+                    "No classes retrieved for day"
+                    f" {target_day.strftime('%A, %Y-%m-%d')}"
                 )
             else:
                 self.logger.info(
-                    f"Retrieved {len(bookings)} classes for day {target_day.strftime('%A, %Y-%m-%d')}"
+                    f"Retrieved {len(bookings)} classes for day"
+                    f" {target_day.strftime('%A, %Y-%m-%d')}"
                 )
 
             return bookings
         else:
             self.logger.error(
-                "Error getting classes for the day %s on request %s with response: %s %s %s",
+                "Error getting classes for the day %s on request %s with response: %s"
+                " %s %s",
                 target_day.strftime("%Y%m%d"),
                 response.url,
                 response.status_code,

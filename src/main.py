@@ -11,6 +11,7 @@ from exceptions import (
     BoxClosed,
     BookingFailed,
     MESSAGE_BOX_IS_CLOSED,
+    DayOff,
 )
 
 
@@ -66,7 +67,7 @@ def validate_target_day(target_day, days_off_file):
     """
     days_off = load_days_off(days_off_file)
     if target_day.strftime("%Y-%m-%d") in days_off:
-        raise NoBookingGoal(
+        raise DayOff(
             f"The date {target_day.strftime('%A, %Y-%m-%d')} is among your days off"
             " list so don't book anything"
         )
@@ -105,6 +106,9 @@ def main(
         # From all the classes fetched, we select the one we want to book.
         class_id = get_class_to_book(classes, target_time, target_name)
         client.book_class(target_day, class_id, family_id)
+    except DayOff as e:
+        logging.error(e)
+        sys.exit(0)
     except (NoClassOnTargetDayTime, BoxClosed, NoBookingGoal, BookingFailed) as e:
         logging.error(e)
         sys.exit(1)
