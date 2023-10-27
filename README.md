@@ -30,6 +30,21 @@ which should be sent in this form:
 {'\"0\":{\"time\":\"1815\"\,\"name\":\"ARIBAU\"}\,\"2\":{\"time\":\"1815\"\,\"name\":\"ARIBAU\"}'}
 ```
 
+As of version 1.3 you can provide a YAML file with your booking goals instead of a json.
+As an example:
+
+```yaml
+Monday:
+  "18:15": ARIBAU
+Tuesday:
+  "9:00": open
+Wednesday:
+  "18:15": ARIBAU
+Saturday:
+  "10:30": wod
+
+```
+
 `box-name`: this is the sub-domain you will find in the url when accessing the booking list from a browser, something like _https://**lahuellacrossfit**.aimharder.com/schedule_
 
 `box-id`: it's always the same one for your gym, you can find it inspecting the request made while booking a class from the browser:

@@ -37,3 +37,7 @@ class BoxClosed(Exception):
 
 class DayOff(Exception):
     pass
+
+
+class InvalidBookingGoals(Exception):
+    pass
