@@ -55,7 +55,11 @@ def load_text_file_content(text_file_path):
     try:
         with open(text_file_path, "r") as file:
             # Read the lines of the file, stripping any leading/trailing whitespace
-            lines = [line.strip() for line in file.readlines()]
+            lines = [
+                line.split("#")[0].strip()
+                for line in file.readlines()
+                if line.strip() and not line.strip().startswith("#")
+            ]
             return lines
     except FileNotFoundError:
         logging.info(f"File not found: {text_file_path}")
