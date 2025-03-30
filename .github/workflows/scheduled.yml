@@ -2,7 +2,7 @@ name: Scheduled FitBot run
 
 on:
   schedule:
-  - cron: "1 0 * * *"
+  - cron: "25 18 * * *"
 
 jobs:
   run:
@@ -13,4 +13,4 @@ jobs:
       - name: Build docker image
         run: make docker/build
       - name: Run fitbot
-        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1815\"\,\"name\":\"ARIBAU\"}\,\"2\":{\"time\":\"1815\"\,\"name\":\"ARIBAU\"}'} -e box-name=lahuellacrossfit -e box-id=3984 -e days-in-advance=3 fitbot
+        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1920\"\,\"name\":\"WOD\"}\,\"1\":{\"time\":\"1920\"\,\"name\":\"Endurance\"}\,\"3\":{\"time\":\"1920\"\,\"name\":\"WOD\"}'} -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 fitbot
