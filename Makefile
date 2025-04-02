@@ -1,23 +1,15 @@
 venv:
-	python3 -m venv venv
-	venv/bin/pip install -r requirements.txt
+	uv sync
 
-format:
-	venv/bin/pip install -r requirements-tests.txt
-	venv/bin/black --verbose src
-	venv/bin/flake8 src
-
-format/check:
-	venv/bin/pip install -r requirements-tests.txt
-	venv/bin/black --verbose src --check
-	venv/bin/flake8 src
+format: venv
+	uv run ruff format
+	uv run ruff check --fix
 
 run: venv
-	PYTHONPATH=src venv/bin/python src/main.py --email=$(email) --password=$(password) --booking-goals=$(booking-goals) --box-name=$(box-name) --box-id=$(box-id) --days-in-advance=$(days-in-advance)
+	uv run python src/main.py --email=$(email) --password=$(password) --booking-goals=$(booking-goals) --box-name=$(box-name) --box-id=$(box-id) --days-in-advance=$(days-in-advance)
 
-tests: venv format/check
-	venv/bin/pip install -r requirements-tests.txt
-	PYTHONPATH=src venv/bin/pytest src/tests
+tests: venv
+	uv run pytest src/tests
 
 docker/build:
 	docker build --no-cache	--tag=fitbot .

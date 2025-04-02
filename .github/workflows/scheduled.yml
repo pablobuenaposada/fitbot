@@ -8,9 +8,5 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v2
-      - name: Build docker image
-        run: make docker/build
       - name: Run fitbot
-        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1920\"\,\"name\":\"WOD\"}\,\"1\":{\"time\":\"1920\"\,\"name\":\"Endurance\"}\,\"3\":{\"time\":\"1920\"\,\"name\":\"WOD\"}'} -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 fitbot
+        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1920\"\,\"name\":\"WOD\"}\,\"1\":{\"time\":\"1920\"\,\"name\":\"Endurance\"}\,\"3\":{\"time\":\"1920\"\,\"name\":\"WOD\"}'} -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 pablobuenaposada/fitbot

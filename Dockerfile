@@ -1,10 +1,11 @@
-FROM python:latest
+FROM python:3.13
 
-WORKDIR /usr/src/app
+ENV PYTHONPATH=src
+WORKDIR /app
 
-COPY src /usr/src/app/src
-COPY Makefile requirements.txt requirements-tests.txt setup.cfg /usr/src/app/
+COPY src /app/src
+COPY Makefile pyproject.toml /app/
 
-RUN make venv
+RUN pip install uv
 
 CMD ["make", "run"]

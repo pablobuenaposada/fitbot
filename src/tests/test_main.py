@@ -93,9 +93,10 @@ class TestMain:
 
     @freeze_time("2022-03-04")
     def test_main(self):
-        with patch("requests.Session.post") as m_post, patch(
-            "requests.Session.get"
-        ) as m_get:
+        with (
+            patch("requests.Session.post") as m_post,
+            patch("requests.Session.get") as m_get,
+        ):
             m_post.side_effect = self.mock_request_post
             m_get.return_value.json.return_value = {
                 "bookings": [{"id": 123, "timeid": "1700_60", "className": "Provenza"}]
