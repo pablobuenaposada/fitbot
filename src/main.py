@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 from datetime import datetime, timedelta
 
 
@@ -9,6 +10,14 @@ from exceptions import (
     BoxClosed,
     MESSAGE_BOX_IS_CLOSED,
 )
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 
 def get_booking_goal_time(day: datetime, booking_goals):
@@ -41,7 +50,11 @@ def main(
     email, password, booking_goals, box_name, box_id, days_in_advance, family_id=None
 ):
     target_day = datetime.today() + timedelta(days=days_in_advance)
-    target_time, target_name = get_booking_goal_time(target_day, booking_goals)
+    try:
+        target_time, target_name = get_booking_goal_time(target_day, booking_goals)
+    except NoBookingGoal as e:
+        logger.info(str(e))
+        return
     client = AimHarderClient(
         email=email, password=password, box_id=box_id, box_name=box_name
     )
