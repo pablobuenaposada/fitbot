@@ -3,7 +3,7 @@ name: Scheduled FitBot run
 on:
   workflow_dispatch:
   schedule:
-  - cron: "01 15 * * *"
+  - cron: "00 17 * * *"
 
 jobs:
   run:
