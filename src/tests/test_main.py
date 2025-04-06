@@ -81,7 +81,11 @@ class TestGetClassToBook:
     )
     def test_get_class_to_book(self, classes, target_time, class_name, expectation):
         with expectation:
-            assert get_class_to_book(classes, target_time, class_name) == 123
+            assert get_class_to_book(classes, target_time, class_name) == {
+                "id": 123,
+                "timeid": "1700_60",
+                "className": "foo",
+            }
 
 
 class TestMain:
@@ -99,7 +103,14 @@ class TestMain:
         ):
             m_post.side_effect = self.mock_request_post
             m_get.return_value.json.return_value = {
-                "bookings": [{"id": 123, "timeid": "1700_60", "className": "Provenza"}]
+                "bookings": [
+                    {
+                        "id": 123,
+                        "timeid": "1700_60",
+                        "className": "Provenza",
+                        "bookState": None,
+                    }
+                ]
             }
             main(
                 email="foo",

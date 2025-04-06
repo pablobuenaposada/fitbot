@@ -11,7 +11,11 @@ from exceptions import BookingFailed, IncorrectCredentials, TooManyWrongAttempts
 
 from constants import ERROR_TAG_ID
 
-from exceptions import MESSAGE_BOOKING_FAILED_NO_CREDIT, MESSAGE_BOOKING_FAILED_UNKNOWN
+from exceptions import (
+    MESSAGE_BOOKING_FAILED_NO_CREDIT,
+    MESSAGE_BOOKING_FAILED_UNKNOWN,
+    MESSAGE_ALREADY_BOOKED_FOR_TIME,
+)
 
 
 class TestAimHarderClient:
@@ -114,6 +118,11 @@ class TestAimHarderClient:
                 {"bookState": -2},
                 HTTPStatus.OK,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_NO_CREDIT),
+            ),
+            (
+                {"bookState": -12},
+                HTTPStatus.OK,
+                pytest.raises(BookingFailed, match=MESSAGE_ALREADY_BOOKED_FOR_TIME),
             ),
         ),
     )

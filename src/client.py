@@ -16,6 +16,7 @@ from exceptions import (
     TooManyWrongAttempts,
     MESSAGE_BOOKING_FAILED_UNKNOWN,
     MESSAGE_BOOKING_FAILED_NO_CREDIT,
+    MESSAGE_ALREADY_BOOKED_FOR_TIME,
 )
 
 
@@ -72,6 +73,8 @@ class AimHarderClient:
             response = response.json()
             if "bookState" in response and response["bookState"] == -2:
                 raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
+            if "bookState" in response and response["bookState"] == -12:
+                raise BookingFailed(MESSAGE_ALREADY_BOOKED_FOR_TIME)
             if "errorMssg" not in response and "errorMssgLang" not in response:
                 # booking went fine
                 return

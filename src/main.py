@@ -9,7 +9,9 @@ from exceptions import (
     NoBookingGoal,
     BoxClosed,
     MESSAGE_BOX_IS_CLOSED,
+    MESSAGE_ALREADY_BOOKED_FOR_TIME,
 )
+from exceptions import BookingFailed
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -43,7 +45,7 @@ def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
         raise NoBookingGoal(
             f"No class with the text `{class_name}` in its name at time `{target_time}`"
         )
-    return _class[0]["id"]
+    return _class[0]
 
 
 def main(
@@ -59,8 +61,19 @@ def main(
         email=email, password=password, box_id=box_id, box_name=box_name
     )
     classes = client.get_classes(target_day, family_id)
-    class_id = get_class_to_book(classes, target_time, target_name)
-    client.book_class(target_day, class_id, family_id)
+    _class = get_class_to_book(classes, target_time, target_name)
+    if _class["bookState"] == 1:
+        logger.info("Class already booked. Nothing to do")
+        return
+    try:
+        client.book_class(target_day, _class["id"], family_id)
+    except BookingFailed as e:
+        if str(e) == MESSAGE_ALREADY_BOOKED_FOR_TIME:
+            logger.error("You are already booked for this time")
+            return
+        else:
+            raise e
+    logger.info("Class booked successfully")
 
 
 if __name__ == "__main__":
