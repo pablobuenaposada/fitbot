@@ -64,7 +64,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--email", required=True, type=str)
     parser.add_argument("--password", required=True, type=str)
-    #parser.add_argument("--booking-goals", required=True, type=json.loads)
+    parser.add_argument("--booking-goals", required=True, type=json.loads)
     parser.add_argument("--box-name", required=True, type=str)
     parser.add_argument("--box-id", required=True, type=int)
     parser.add_argument("--days-in-advance", required=True, type=int, default=3)
