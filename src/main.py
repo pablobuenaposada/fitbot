@@ -78,7 +78,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     input = {key: value for key, value in args.__dict__.items() if value != ""}
-
+    print(input)
     if os.path.isfile('booking-goals.yml'):
         booking_goals = yaml.safe_load('booking-goals.yml')
         input['booking-goals'] = booking_goals
