@@ -82,5 +82,5 @@ if __name__ == "__main__":
     if os.path.isfile('booking-goals.yml'):
         booking_goals = yaml.safe_load('booking-goals.yml')
         input['booking_goals'] = booking_goals
-
+    print(input)
     main(**input)
