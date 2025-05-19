@@ -13,13 +13,13 @@ from exceptions import (
 )
 from exceptions import BookingFailed
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()],
+    datefmt="%m-%d-%Y %I:%M:%S %p %Z",
+)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
 
 
 def get_booking_goal_time(day: datetime, booking_goals):
