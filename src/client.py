@@ -1,5 +1,6 @@
 from datetime import datetime
 from http import HTTPStatus
+from typing import Optional
 
 from bs4 import BeautifulSoup
 from requests import Session
@@ -18,17 +19,27 @@ from exceptions import (
     MESSAGE_BOOKING_FAILED_NO_CREDIT,
     MESSAGE_ALREADY_BOOKED_FOR_TIME,
 )
+from logger import logger
 
 
 class AimHarderClient:
-    def __init__(self, email: str, password: str, box_id: int, box_name: str):
-        self.session = self._login(email, password)
+    def __init__(
+        self,
+        email: str,
+        password: str,
+        box_id: int,
+        box_name: str,
+        proxy: Optional[str] = None,
+    ):
+        self.session = self._login(email, password, proxy)
         self.box_id = box_id
         self.box_name = box_name
 
     @staticmethod
-    def _login(email: str, password: str):
+    def _login(email: str, password: str, proxy: Optional[str] = None) -> Session:
         session = Session()
+        session.proxies = {"https": proxy}
+        logger.info(f"Using proxy: {proxy}" if proxy else "No proxy is being used")
         response = session.post(
             LOGIN_ENDPOINT,
             data={

@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run fitbot
-        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1920\"\,\"name\":\"WOD\"}\,\"1\":{\"time\":\"1920\"\,\"name\":\"Endurance\"}\,\"3\":{\"time\":\"1920\"\,\"name\":\"WOD\"}'} -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 pablobuenaposada/fitbot
+        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1920\"\,\"name\":\"WOD\"}\,\"1\":{\"time\":\"1920\"\,\"name\":\"Endurance\"}\,\"3\":{\"time\":\"1920\"\,\"name\":\"WOD\"}'} -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 -e proxy=socks5://57.129.81.201:1080 pablobuenaposada/fitbot

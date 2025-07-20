@@ -1,6 +1,5 @@
 import argparse
 import json
-import logging
 from datetime import datetime, timedelta
 
 
@@ -12,14 +11,7 @@ from exceptions import (
     MESSAGE_ALREADY_BOOKED_FOR_TIME,
 )
 from exceptions import BookingFailed
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()],
-    datefmt="%m-%d-%Y %I:%M:%S %p %Z",
-)
-logger = logging.getLogger(__name__)
+from logger import logger
 
 
 def get_booking_goal_time(day: datetime, booking_goals):
@@ -49,7 +41,14 @@ def get_class_to_book(classes: list[dict], target_time: str, class_name: str):
 
 
 def main(
-    email, password, booking_goals, box_name, box_id, days_in_advance, family_id=None
+    email,
+    password,
+    booking_goals,
+    box_name,
+    box_id,
+    days_in_advance,
+    family_id=None,
+    proxy=None,
 ):
     target_day = datetime.today() + timedelta(days=days_in_advance)
     try:
@@ -58,7 +57,7 @@ def main(
         logger.info(str(e))
         return
     client = AimHarderClient(
-        email=email, password=password, box_id=box_id, box_name=box_name
+        email=email, password=password, box_id=box_id, box_name=box_name, proxy=proxy
     )
     classes = client.get_classes(target_day, family_id)
     _class = get_class_to_book(classes, target_time, target_name)
@@ -85,6 +84,7 @@ if __name__ == "__main__":
      --box-id 3984
      --booking-goal '{"0":{"time": "1815", "name": "Provenza"}}'
      --family-id 123456
+     --proxy socks5://89.58.45.94:34472
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("--email", required=True, type=str)
@@ -93,6 +93,7 @@ if __name__ == "__main__":
     parser.add_argument("--box-name", required=True, type=str)
     parser.add_argument("--box-id", required=True, type=int)
     parser.add_argument("--days-in-advance", required=True, type=int, default=3)
+    parser.add_argument("--proxy", required=False, type=str, default=None)
     parser.add_argument(
         "--family-id",
         required=False,
