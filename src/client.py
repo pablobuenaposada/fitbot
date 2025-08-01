@@ -39,7 +39,7 @@ class AimHarderClient:
     def _login(email: str, password: str, proxy: Optional[str] = None) -> Session:
         session = Session()
         session.proxies = {"https": proxy}
-        logger.info(f"Using proxy: {proxy}" if proxy else "No proxy is being used")
+        logger.info(f"Using proxy: {'yes' if proxy else 'no'}")
         response = session.post(
             LOGIN_ENDPOINT,
             data={
@@ -55,6 +55,7 @@ class AimHarderClient:
                 raise TooManyWrongAttempts
             elif IncorrectCredentials.key_phrase in soup.text:
                 raise IncorrectCredentials
+        logger.info("Logged successfully")
         return session
 
     def get_classes(self, target_day: datetime, family_id: str | None = None):
