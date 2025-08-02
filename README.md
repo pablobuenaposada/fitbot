@@ -6,8 +6,9 @@ Python script to automate your session bookings in [aimharder.com](http://aimhar
 
 Having docker installed you only need to do the following command:
 
-`docker run -e email=your.email@mail.com -e password=1234 -e booking-goals={'\"0\":{\"time\":\"1815\"\,\"name\":\"Provenza\"}'} -e box-name=lahuellacrossfit -e box-id=3984 -e days-in-advance=3 pablobuenaposada/fitbot`
-
+```bash
+docker run -e email=your.email@mail.com -e password=1234 -e booking-goals={'\"0\":{\"time\":\"1815\"\,\"name\":\"Provenza\"}'} -e box-name=lahuellacrossfit -e box-id=3984 -e days-in-advance=3 pablobuenaposada/fitbot
+````
 Explanation about the fields:
 
 `email`: self-explanatory
@@ -50,5 +51,11 @@ The United States seems to be heavily blocked (possibly only Azure IPs), so runn
 
 **Note:** Use free proxies at your own risk, as your credentials will be transmitted through them. Additionally avoid sharing the proxy you are using in here since AimHarder may block it.
 
+## I'm a cheapo, can I run this without using my own infrastructure for free?
+Yes, you can! By using GitHub Actions, you can run this script without needing your own infrastructure. It can also be configured to run automatically on a schedule. For details about potential connection blocks and proxy usage, refer to the previous section.
+
+You can find an example of the GitHub Actions workflow in the [`.github/workflows/scheduled.yml`](.github/workflows/scheduled.yml) file.
+
+Clone this repo, get a proxy (https://www.freeproxy.world/), add your secrets, edit the file to your needs and it should be ready to go.
 
 Enjoy!
