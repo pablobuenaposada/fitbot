@@ -3,7 +3,7 @@ from abc import ABC
 MESSAGE_BOOKING_FAILED_NO_CREDIT = "No credit available"
 MESSAGE_BOOKING_FAILED_UNKNOWN = "Unknown error"
 MESSAGE_BOX_IS_CLOSED = "Box is closed"
-MESSAGE_ALREADY_BOOKED_FOR_TIME = "Already booked for this time"
+MESSAGE_TOO_SOON_TO_BOOK = "Too soon to book the class"
 
 
 class ErrorResponse(ABC, Exception):

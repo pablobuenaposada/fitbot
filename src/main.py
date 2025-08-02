@@ -8,7 +8,6 @@ from exceptions import (
     NoBookingGoal,
     BoxClosed,
     MESSAGE_BOX_IS_CLOSED,
-    MESSAGE_ALREADY_BOOKED_FOR_TIME,
 )
 from exceptions import BookingFailed
 from logger import logger
@@ -67,11 +66,8 @@ def main(
     try:
         client.book_class(target_day, _class["id"], family_id)
     except BookingFailed as e:
-        if str(e) == MESSAGE_ALREADY_BOOKED_FOR_TIME:
-            logger.error("You are already booked for this time")
-            return
-        else:
-            raise e
+        logger.error(str(e))
+        return
     logger.info("Class booked successfully")
 
 

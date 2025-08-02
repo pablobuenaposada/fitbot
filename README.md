@@ -44,11 +44,11 @@ The value for this parameter can be found by inspecting the requests with the br
 `proxy`: Optional. If you want to use a proxy, you can set it with the format `socks5://ip:port`.
 
 ## 🚨 Proxy note 🚨
-Seems that aimharder has started to block connections returning a 403 error depending on the location of the IP address, so if you are running this script from outside Spain you might get 403 errors, that's why the proxy argument has been added.
+It appears that AimHarder has started blocking connections by returning a 403 error based on the IP address location. If you are running this script from outside Spain, you may encounter these errors, which is why the proxy argument has been added.
 
-United States seems heavily blocked (maybe only Azure IPs?), so if you are running this script from GitHub Actions it most likely will not work without a proxy, I don't have proof but it seems to me aimharder don't like us running this at all and even less to automate it with GitHub Actions for free :) so if you want this route get a proxy that is not blocked by aimharder.
+The United States seems to be heavily blocked (possibly only Azure IPs), so running this script from GitHub Actions will likely fail without a proxy. While this is not confirmed, it seems AimHarder doesn't like the use of automated scripts, especially when run for free via GitHub Actions 😀. If you choose this approach, ensure you use a proxy that is not blocked by AimHarder.
 
-Use a free proxy under your own risk, remember that your credentials will be sent through it.
+**Note:** Use free proxies at your own risk, as your credentials will be transmitted through them. Additionally avoid sharing the proxy you are using in here since AimHarder may block it.
 
 
 Enjoy!
