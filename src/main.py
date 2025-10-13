@@ -63,11 +63,11 @@ def main(
     if _class["bookState"] == 1:
         logger.info("Class already booked. Nothing to do")
         return
-    try:
-        client.book_class(target_day, _class["id"], family_id)
-    except BookingFailed as e:
-        logger.error(str(e))
-        return
+    # try:
+    #     client.book_class(target_day, _class["id"], family_id)
+    # except BookingFailed as e:
+    #     logger.error(str(e))
+    #     return
     logger.info("Class booked successfully")
 
 
