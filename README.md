@@ -90,13 +90,6 @@ crontab -e
 1 0 * * * cd /path/to/fitbot && docker run --env-file .env --env-file .env.secrets pablobuenaposada/fitbot >> /var/log/fitbot.log 2>&1
 ```
 
-### Troubleshooting
-
-**"uv: Operation not permitted"** on older systems (Debian 10, etc.):
-```bash
-docker run --security-opt seccomp=unconfined --env-file .env --env-file .env.secrets pablobuenaposada/fitbot
-```
-
 ## 🚨 Proxy note 🚨
 It appears that AimHarder has started blocking connections by returning a 403 error based on the IP address location. If you are running this script from outside Spain, you may encounter these errors, which is why the proxy argument has been added.
 
