@@ -1,0 +1,8 @@
+services:
+  fitbot:
+    build: .
+    # Or use pre-built image:
+    # image: pablobuenaposada/fitbot
+    env_file:
+      - .env
+      - .env.secrets
