@@ -44,9 +44,9 @@ The value for this parameter can be found by inspecting the requests with the br
 
 `proxy`: Optional. If you want to use a proxy, you can set it with the format `socks5://ip:port`.
 
-## Docker Compose (Recommended)
+## Using env files
 
-For local deployments with secure credential management, use Docker Compose:
+For local deployments, use env files instead of passing credentials directly on the command line:
 
 ### Setup
 
@@ -62,7 +62,7 @@ For local deployments with secure credential management, use Docker Compose:
 
 4. **Run:**
    ```bash
-   docker compose up
+   docker run --env-file .env --env-file .env.secrets pablobuenaposada/fitbot
    ```
 
 > **Security Note:** `.env.secrets` is gitignored to prevent accidentally committing credentials. Never commit this file.
@@ -87,7 +87,7 @@ To run FitBot automatically every day, add a cron job:
 crontab -e
 
 # Add this line to run at 00:01 daily (adjust time based on when your gym opens bookings)
-1 0 * * * cd /path/to/fitbot && docker compose up >> /var/log/fitbot.log 2>&1
+1 0 * * * cd /path/to/fitbot && docker run --env-file .env --env-file .env.secrets pablobuenaposada/fitbot >> /var/log/fitbot.log 2>&1
 ```
 
 ## 🚨 Proxy note 🚨
