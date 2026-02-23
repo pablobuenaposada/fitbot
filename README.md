@@ -67,18 +67,6 @@ You can use env files for configuration and credentials instead of passing them 
 
 > **Security Note:** `.env.secrets` is gitignored to prevent accidentally committing credentials. Never commit this file.
 
-### Automatic Daily Booking (Cron)
-
-To run FitBot automatically every day, add a cron job:
-
-```bash
-# Edit crontab
-crontab -e
-
-# Add this line to run at 00:01 daily (adjust time based on when your gym opens bookings)
-1 0 * * * cd /path/to/fitbot && docker run --env-file .env --env-file .env.secrets pablobuenaposada/fitbot >> /var/log/fitbot.log 2>&1
-```
-
 ## 🚨 Proxy note 🚨
 It appears that AimHarder has started blocking connections by returning a 403 error based on the IP address location. If you are running this script from outside Spain, you may encounter these errors, which is why the proxy argument has been added.
 
