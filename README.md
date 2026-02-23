@@ -46,7 +46,7 @@ The value for this parameter can be found by inspecting the requests with the br
 
 ## Using env files
 
-For local deployments, use env files instead of passing credentials directly on the command line:
+You can use env files for configuration and credentials instead of passing them directly on the command line:
 
 ### Setup
 
