@@ -67,17 +67,6 @@ You can use env files for configuration and credentials instead of passing them 
 
 > **Security Note:** `.env.secrets` is gitignored to prevent accidentally committing credentials. Never commit this file.
 
-### Book the Same Class Every Day
-
-To book the same class at the same time every day of the week, set all days (0-6) in `booking-goals`:
-
-```bash
-# In .env - CrossFit at 18:15 every weekday, 10:00 on weekends
-booking-goals={"0":{"time":"1815","name":"CrossFit"},"1":{"time":"1815","name":"CrossFit"},"2":{"time":"1815","name":"CrossFit"},"3":{"time":"1815","name":"CrossFit"},"4":{"time":"1815","name":"CrossFit"},"5":{"time":"1000","name":"CrossFit"},"6":{"time":"1000","name":"CrossFit"}}
-```
-
-Day mapping: `0`=Monday, `1`=Tuesday, `2`=Wednesday, `3`=Thursday, `4`=Friday, `5`=Saturday, `6`=Sunday
-
 ### Automatic Daily Booking (Cron)
 
 To run FitBot automatically every day, add a cron job:
