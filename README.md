@@ -44,6 +44,29 @@ The value for this parameter can be found by inspecting the requests with the br
 
 `proxy`: Optional. If you want to use a proxy, you can set it with the format `socks5://ip:port`.
 
+## Using env files
+
+You can use env files for configuration and credentials instead of passing them directly on the command line:
+
+### Setup
+
+1. **Copy the example files:**
+   ```bash
+   cp .env.example .env
+   cp .env.secrets.example .env.secrets
+   ```
+
+2. **Edit `.env`** with your gym configuration (box-name, box-id, booking-goals)
+
+3. **Edit `.env.secrets`** with your credentials (email, password)
+
+4. **Run:**
+   ```bash
+   docker run --env-file .env --env-file .env.secrets pablobuenaposada/fitbot
+   ```
+
+> **Security Note:** `.env.secrets` is gitignored to prevent accidentally committing credentials. Never commit this file.
+
 ## 🚨 Proxy note 🚨
 It appears that AimHarder has started blocking connections by returning a 403 error based on the IP address location. If you are running this script from outside Spain, you may encounter these errors, which is why the proxy argument has been added.
 
