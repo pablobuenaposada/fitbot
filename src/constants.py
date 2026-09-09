@@ -1,6 +1,4 @@
-LOGIN_ENDPOINT = "https://aimharder.com/login"
-
-ERROR_TAG_ID = "loginErrors"
+LOGIN_ENDPOINT = "https://login.aimharder.com/api/login"
 
 
 def book_endpoint(box_name):

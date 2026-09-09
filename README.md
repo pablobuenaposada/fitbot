@@ -21,10 +21,7 @@ Unfortunately this structure needs to be crazy escaped, but here's an example:
 Mondays at 18:15 class name should contain ARIBAU
 Wednesdays at 18:15 class name should contain ARIBAU
 ```python
-{
-  "0": {"time":"1815", "name":"ARIBAU"},
-  "2": {"time":"1815", "name":"ARIBAU"}
-}
+{"0": {"time": "1815", "name": "ARIBAU"}, "2": {"time": "1815", "name": "ARIBAU"}}
 ```
 which should be sent in this form:
 ```sh

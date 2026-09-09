@@ -1,15 +1,14 @@
 import argparse
 import json
-from datetime import datetime, timedelta
-
+from datetime import UTC, datetime, timedelta
 
 from client import AimHarderClient
 from exceptions import (
-    NoBookingGoal,
-    BoxClosed,
     MESSAGE_BOX_IS_CLOSED,
+    BookingFailed,
+    BoxClosed,
+    NoBookingGoal,
 )
-from exceptions import BookingFailed
 from logger import logger
 
 
@@ -49,7 +48,7 @@ def main(
     family_id=None,
     proxy=None,
 ):
-    target_day = datetime.today() + timedelta(days=days_in_advance)
+    target_day = datetime.now(tz=UTC) + timedelta(days=days_in_advance)
     try:
         target_time, target_name = get_booking_goal_time(target_day, booking_goals)
     except NoBookingGoal as e:

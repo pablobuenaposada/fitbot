@@ -1,24 +1,14 @@
 import datetime
+from contextlib import nullcontext as does_not_raise
 from http import HTTPStatus
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 import pytest
-
-from contextlib import nullcontext as does_not_raise
-
-from exceptions import NoBookingGoal, BoxClosed
-
-from main import get_class_to_book
-
-from main import get_booking_goal_time
-
-from main import main
-
 from freezegun import freeze_time
 
-from constants import LOGIN_ENDPOINT
-
-from constants import book_endpoint
+from constants import LOGIN_ENDPOINT, book_endpoint
+from exceptions import BoxClosed, NoBookingGoal
+from main import get_booking_goal_time, get_class_to_book, main
 
 
 class TestGetBookingGoalTime:
@@ -26,13 +16,13 @@ class TestGetBookingGoalTime:
         "day, booking_goals, expected_time, expectation",
         (
             (
-                datetime.datetime(2022, 2, 28),
+                datetime.datetime(2022, 2, 28, tzinfo=datetime.UTC),
                 {"0": {"time": "1700", "name": "foo"}},
                 ("1700", "foo"),
                 does_not_raise(),
             ),
             (
-                datetime.datetime(2022, 2, 28),
+                datetime.datetime(2022, 2, 28, tzinfo=datetime.UTC),
                 {},
                 None,
                 pytest.raises(NoBookingGoal),
@@ -91,9 +81,9 @@ class TestGetClassToBook:
 class TestMain:
     def mock_request_post(*args, **kwargs):
         if args[1] == LOGIN_ENDPOINT:
-            return Mock(content="")
+            return Mock(status_code=HTTPStatus.OK)
         elif args[1] == book_endpoint("foo"):
-            return Mock(json=lambda: {}, status_code=HTTPStatus.OK)
+            return Mock(json=dict, status_code=HTTPStatus.OK)
 
     @freeze_time("2022-03-04")
     def test_main(self):

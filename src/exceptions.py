@@ -11,11 +11,11 @@ class ErrorResponse(ABC, Exception):
 
 
 class TooManyWrongAttempts(ErrorResponse):
-    key_phrase = "demasiadas veces"
+    key_phrase = "LOGIN_ERROR_TOO_MANY_ATTEMPTS"
 
 
 class IncorrectCredentials(ErrorResponse):
-    key_phrase = "incorrecto"
+    key_phrase = "LOGIN_ERROR_LOGIN"
 
 
 class BookingFailed(Exception):
