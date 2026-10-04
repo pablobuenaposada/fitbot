@@ -10,6 +10,7 @@ from constants import (
 )
 from exceptions import (
     MESSAGE_BOOKING_FAILED_NO_CREDIT,
+    MESSAGE_BOOKING_FAILED_PENDING_PAYMENT,
     MESSAGE_BOOKING_FAILED_UNKNOWN,
     MESSAGE_TOO_SOON_TO_BOOK,
     BookingFailed,
@@ -76,11 +77,12 @@ class AimHarderClient:
         )
         if response.status_code == HTTPStatus.OK:
             response = response.json()
-            if "bookState" in response and response["bookState"] == -2:
+            if response.get("bookState") == -2:
                 raise BookingFailed(MESSAGE_BOOKING_FAILED_NO_CREDIT)
-            if "bookState" in response and response["bookState"] == -12:
+            if response.get("bookState") == -5:
+                raise BookingFailed(MESSAGE_BOOKING_FAILED_PENDING_PAYMENT)
+            if response.get("bookState") == -12:
                 raise BookingFailed(MESSAGE_TOO_SOON_TO_BOOK)
-            if "errorMssg" not in response and "errorMssgLang" not in response:
-                # booking went fine
-                return
+            # booking went fine
+            return
         raise BookingFailed(MESSAGE_BOOKING_FAILED_UNKNOWN)

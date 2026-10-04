@@ -1,6 +1,7 @@
 from abc import ABC
 
 MESSAGE_BOOKING_FAILED_NO_CREDIT = "No credit available"
+MESSAGE_BOOKING_FAILED_PENDING_PAYMENT = "You have a pending payment"
 MESSAGE_BOOKING_FAILED_UNKNOWN = "Unknown error"
 MESSAGE_BOX_IS_CLOSED = "Box is closed"
 MESSAGE_TOO_SOON_TO_BOOK = "Too soon to book the class"

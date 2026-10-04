@@ -10,6 +10,7 @@ from requests.exceptions import HTTPError
 from client import AimHarderClient
 from exceptions import (
     MESSAGE_BOOKING_FAILED_NO_CREDIT,
+    MESSAGE_BOOKING_FAILED_PENDING_PAYMENT,
     MESSAGE_BOOKING_FAILED_UNKNOWN,
     MESSAGE_TOO_SOON_TO_BOOK,
     BookingFailed,
@@ -122,19 +123,21 @@ class TestAimHarderClient:
                 does_not_raise(),
             ),
             (
-                {"errorMssg": "foo"},
+                {"bookState": 1},
                 HTTPStatus.OK,
-                pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
-            ),
-            (
-                {"errorMssgLang": "foo"},
-                HTTPStatus.OK,
-                pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_UNKNOWN),
+                does_not_raise(),
             ),
             (
                 {"bookState": -2},
                 HTTPStatus.OK,
                 pytest.raises(BookingFailed, match=MESSAGE_BOOKING_FAILED_NO_CREDIT),
+            ),
+            (
+                {"bookState": -5},
+                HTTPStatus.OK,
+                pytest.raises(
+                    BookingFailed, match=MESSAGE_BOOKING_FAILED_PENDING_PAYMENT
+                ),
             ),
             (
                 {"bookState": -12},
