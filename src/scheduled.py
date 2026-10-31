@@ -17,17 +17,25 @@ def load_config(path=CONFIG_PATH):
         return json.load(config_file)
 
 
-def run(config, now=None):
+def parse_local_datetime(value, timezone):
+    parsed = datetime.fromisoformat(value)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone)
+    return parsed.astimezone(timezone)
+
+
+def run(config, now=None, client_class=None):
     timezone = ZoneInfo(config.get("timezone", "Europe/Madrid"))
     now = now or datetime.now(timezone)
     if now.tzinfo is None:
         raise ValueError("The current time must include a timezone")
+    now = now.astimezone(timezone)
 
     window_minutes = int(config.get("window_minutes", 30))
     due_bookings = []
     for booking in config["bookings"]:
-        opens_at = datetime.fromisoformat(booking["opens_at"]).replace(tzinfo=timezone)
-        elapsed = now.astimezone(timezone) - opens_at
+        opens_at = parse_local_datetime(booking["opens_at"], timezone)
+        elapsed = now - opens_at
         if timedelta(0) <= elapsed <= timedelta(minutes=window_minutes):
             due_bookings.append(booking)
 
@@ -35,9 +43,15 @@ def run(config, now=None):
         logger.info("No bookings are due in the current time window.")
         return
 
-    client = AimHarderClient(
-        email=os.environ["EMAIL"],
-        password=os.environ["PASSWORD"],
+    email = os.environ.get("EMAIL")
+    password = os.environ.get("PASSWORD")
+    if not email or not password:
+        raise RuntimeError("EMAIL and PASSWORD must be configured as GitHub Actions secrets.")
+
+    client_class = client_class or AimHarderClient
+    client = client_class(
+        email=email,
+        password=password,
         box_id=int(config["box_id"]),
         box_name=config["box_name"],
         proxy=os.environ.get("PROXY") or None,
