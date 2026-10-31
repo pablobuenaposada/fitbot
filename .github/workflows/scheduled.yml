@@ -45,5 +45,5 @@ jobs:
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
           PROXY: ${{ secrets.PROXY }}
-          DRY_RUN: "true"
+          DRY_RUN: "false"
         run: PYTHONPATH=src python src/scheduled.py
