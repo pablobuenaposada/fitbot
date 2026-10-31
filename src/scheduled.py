@@ -46,7 +46,9 @@ def run(config, now=None, client_class=None):
     email = os.environ.get("EMAIL")
     password = os.environ.get("PASSWORD")
     if not email or not password:
-        raise RuntimeError("EMAIL and PASSWORD must be configured as GitHub Actions secrets.")
+        raise RuntimeError(
+            "EMAIL and PASSWORD must be configured as GitHub Actions secrets."
+        )
 
     client_class = client_class or AimHarderClient
     client = client_class(
@@ -56,7 +58,9 @@ def run(config, now=None, client_class=None):
         box_name=config["box_name"],
         proxy=os.environ.get("PROXY") or None,
     )
-    dry_run = os.environ.get("DRY_RUN", str(config.get("dry_run", True))).lower() == "true"
+    dry_run = (
+        os.environ.get("DRY_RUN", str(config.get("dry_run", True))).lower() == "true"
+    )
 
     for booking in due_bookings:
         target_day = datetime.combine(
@@ -69,25 +73,52 @@ def run(config, now=None, client_class=None):
             classes = client.get_classes(target_day, config.get("family_id"))
             selected_class = get_class_to_book(classes, target_time, class_name)
         except (BoxClosed, NoBookingGoal) as error:
-            logger.error("Could not identify %s on %s: %s", class_name, booking["date"], error)
+            logger.error(
+                "Could not identify %s on %s: %s",
+                class_name,
+                booking["date"],
+                error,
+            )
             continue
 
         if selected_class.get("bookState") == 1:
-            logger.info("Already booked: %s %s on %s", booking["time"], class_name, booking["date"])
+            logger.info(
+                "Already booked: %s %s on %s",
+                booking["time"],
+                class_name,
+                booking["date"],
+            )
             continue
 
         if dry_run:
             logger.info(
                 "DRY RUN: would book %s %s on %s (class id %s)",
-                booking["time"], class_name, booking["date"], selected_class["id"],
+                booking["time"],
+                class_name,
+                booking["date"],
+                selected_class["id"],
             )
             continue
 
         try:
-            client.book_class(target_day, selected_class["id"], config.get("family_id"))
-            logger.info("Booking request sent: %s %s on %s", booking["time"], class_name, booking["date"])
+            client.book_class(
+                target_day,
+                selected_class["id"],
+                config.get("family_id"),
+            )
+            logger.info(
+                "Booking request sent: %s %s on %s",
+                booking["time"],
+                class_name,
+                booking["date"],
+            )
         except BookingFailed as error:
-            logger.error("Booking failed for %s on %s: %s", class_name, booking["date"], error)
+            logger.error(
+                "Booking failed for %s on %s: %s",
+                class_name,
+                booking["date"],
+                error,
+            )
 
 
 if __name__ == "__main__":

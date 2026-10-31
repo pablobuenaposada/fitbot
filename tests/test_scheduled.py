@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -15,12 +16,14 @@ class FakeClient:
         self.kwargs = kwargs
 
     def get_classes(self, target_day, family_id=None):
-        return [{
-            "timeid": "1715",
-            "className": "Weightlifting",
-            "bookState": 0,
-            "id": "class-123",
-        }]
+        return [
+            {
+                "timeid": "1715",
+                "className": "Weightlifting",
+                "bookState": 0,
+                "id": "class-123",
+            }
+        ]
 
     def book_class(self, target_day, class_id, family_id=None):
         self.book_calls.append((target_day, class_id, family_id))
@@ -34,12 +37,14 @@ def config():
         "family_id": None,
         "dry_run": True,
         "window_minutes": 30,
-        "bookings": [{
-            "date": "2026-11-04",
-            "opens_at": "2026-11-01T17:15:00",
-            "time": "17:15",
-            "name": "Weightlifting",
-        }],
+        "bookings": [
+            {
+                "date": "2026-11-04",
+                "opens_at": "2026-11-01T17:15:00",
+                "time": "17:15",
+                "name": "Weightlifting",
+            }
+        ],
     }
 
 
@@ -50,6 +55,7 @@ def test_does_nothing_before_opening_without_credentials(monkeypatch):
 
 
 def test_due_booking_uses_dry_run_by_default(monkeypatch, caplog):
+    caplog.set_level(logging.INFO, logger="fitbot")
     monkeypatch.setenv("EMAIL", "test@example.com")
     monkeypatch.setenv("PASSWORD", "not-a-real-password")
     monkeypatch.delenv("DRY_RUN", raising=False)
@@ -77,12 +83,14 @@ def test_already_booked_class_is_not_booked(monkeypatch):
 
     class AlreadyBookedClient(FakeClient):
         def get_classes(self, target_day, family_id=None):
-            return [{
-                "timeid": "1715",
-                "className": "Weightlifting",
-                "bookState": 1,
-                "id": "class-123",
-            }]
+            return [
+                {
+                    "timeid": "1715",
+                    "className": "Weightlifting",
+                    "bookState": 1,
+                    "id": "class-123",
+                }
+            ]
 
     client = AlreadyBookedClient()
     scheduled.run(
