@@ -1,0 +1,34 @@
+{
+  "timezone": "Europe/Madrid",
+  "box_name": "studiocrossfit",
+  "box_id": 9507,
+  "family_id": null,
+  "dry_run": true,
+  "window_minutes": 30,
+  "bookings": [
+    {
+      "date": "2026-11-04",
+      "opens_at": "2026-11-01T17:15:00",
+      "time": "17:15",
+      "name": "Weightlifting"
+    },
+    {
+      "date": "2026-11-04",
+      "opens_at": "2026-11-01T18:15:00",
+      "time": "18:15",
+      "name": "Strength & Conditioning"
+    },
+    {
+      "date": "2026-11-05",
+      "opens_at": "2026-11-02T08:00:00",
+      "time": "08:00",
+      "name": "Strength & Conditioning"
+    },
+    {
+      "date": "2026-11-06",
+      "opens_at": "2026-11-03T08:00:00",
+      "time": "08:00",
+      "name": "Strength & Conditioning"
+    }
+  ]
+}
