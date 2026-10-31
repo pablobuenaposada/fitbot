@@ -1,12 +1,40 @@
-name: Scheduled FitBot run
+name: StudioCrossfit reservation scheduler
 
 on:
   schedule:
-  - cron: "25 17 * * *"
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studiocrossfit-reservations
+  cancel-in-progress: false
 
 jobs:
-  run:
+  reserve:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Run fitbot
-        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals='{"0":{"time":"1920","name":"WOD"},"1":{"time":"1920","name":"Endurance"},"3":{"time":"1920","name":"WOD"}}' -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 -e proxy=${{ secrets.PROXY }} pablobuenaposada/fitbot
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip requests pysocks beautifulsoup4
+
+      - name: Check configuration
+        run: python -m json.tool reservas.json > /dev/null
+
+      - name: Run scheduler
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PROXY: ${{ secrets.PROXY }}
+          DRY_RUN: "true"
+        run: PYTHONPATH=src python src/scheduled.py
