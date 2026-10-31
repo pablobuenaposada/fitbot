@@ -7,6 +7,12 @@
   "window_minutes": 30,
   "bookings": [
     {
+      "date": "2026-11-03",
+      "opens_at": "2026-10-31T18:45:00",
+      "time": "18:15",
+      "name": "Metcon"
+    },
+    {
       "date": "2026-11-04",
       "opens_at": "2026-11-01T17:15:00",
       "time": "17:15",
